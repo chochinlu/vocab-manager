@@ -11,6 +11,7 @@ import { useAIFeatures } from './hooks/useAIFeatures';
 // Components
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { DynamicBackground } from './components/common/DynamicBackground';
+import { BackToTop } from './components/common/BackToTop';
 import { Header } from './components/Layout/Header';
 import { FilterBar } from './components/Search/FilterBar';
 import { VocabForm } from './components/Form/VocabForm';
@@ -275,6 +276,9 @@ const VocabManager = () => {
         />
         </div>
       </div>
+
+      {/* Back to Top 按鈕 */}
+      <BackToTop />
     </DynamicBackground>
   );
 };
