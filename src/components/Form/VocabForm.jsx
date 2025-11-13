@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Check, X, RefreshCw, Plus, Edit2, Volume2, AlertTriangle, Languages, Loader2 } from 'lucide-react';
 import { POS_OPTIONS } from '../../utils/constants';
 import { AITools } from './AITools';
@@ -39,6 +39,23 @@ export const VocabForm = ({
   const [definitionTranslation, setDefinitionTranslation] = useState(null);
   const [isTranslatingDefinition, setIsTranslatingDefinition] = useState(false);
   const [definitionTranslationError, setDefinitionTranslationError] = useState(null);
+
+  // 監聽 ESC 鍵取消表單
+  useEffect(() => {
+    const handleEscapeKey = (event) => {
+      if (event.key === 'Escape') {
+        onCancel();
+      }
+    };
+
+    // 添加事件監聽器
+    document.addEventListener('keydown', handleEscapeKey);
+
+    // 清理事件監聽器
+    return () => {
+      document.removeEventListener('keydown', handleEscapeKey);
+    };
+  }, [onCancel]);
 
   const updateField = (field, value) => {
     onFormDataChange({ ...formData, [field]: value });
