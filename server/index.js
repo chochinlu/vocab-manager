@@ -8,6 +8,7 @@ const app = express();
 const PORT = process.env.PORT || 3001;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
 const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
+const UNSPLASH_ACCESS_KEY = process.env.UNSPLASH_ACCESS_KEY;
 
 // 中介軟體
 app.use(cors());
@@ -365,6 +366,71 @@ app.post('/api/openrouter/spell-check', async (req, res) => {
   } catch (error) {
     console.error('OpenRouter 拼字檢查錯誤:', error);
     res.status(500).json({ error: '拼字檢查服務連線失敗' });
+  }
+});
+
+/**
+ * Unsplash 隨機背景圖片
+ * GET /api/unsplash/random
+ */
+app.get('/api/unsplash/random', async (req, res) => {
+  const { query, collections, orientation = 'landscape' } = req.query;
+
+  if (!UNSPLASH_ACCESS_KEY) {
+    return res.status(500).json({ error: 'Unsplash Access Key 未設定' });
+  }
+
+  try {
+    // 建立查詢參數
+    const params = new URLSearchParams({
+      client_id: UNSPLASH_ACCESS_KEY,
+      orientation
+    });
+
+    if (query) {
+      params.append('query', query);
+    }
+
+    if (collections) {
+      params.append('collections', collections);
+    }
+
+    const response = await fetch(`https://api.unsplash.com/photos/random?${params.toString()}`);
+    const data = await response.json();
+
+    if (response.status === 401) {
+      console.error('Unsplash API 認證失敗');
+      return res.status(401).json({ error: 'Unsplash API Key 無效' });
+    }
+
+    if (response.status === 403) {
+      console.error('Unsplash API 超過請求限制');
+      return res.status(403).json({ error: 'API 請求次數已達上限（每小時 50 次）' });
+    }
+
+    if (!response.ok) {
+      console.error('Unsplash API 錯誤:', data);
+      return res.status(response.status).json({ error: '獲取背景圖片失敗' });
+    }
+
+    // 回傳精簡的圖片資訊
+    res.json({
+      id: data.id,
+      url: data.urls.regular,      // 1080p
+      urlFull: data.urls.full,     // 原始尺寸
+      urlRaw: data.urls.raw,       // 可自訂尺寸
+      width: data.width,
+      height: data.height,
+      description: data.description || data.alt_description,
+      author: {
+        name: data.user.name,
+        link: data.user.links.html
+      },
+      downloadLocation: data.links.download_location
+    });
+  } catch (error) {
+    console.error('Unsplash API 連線錯誤:', error);
+    res.status(500).json({ error: '背景圖片服務連線失敗' });
   }
 });
 

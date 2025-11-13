@@ -7,7 +7,7 @@ import { Book, Plus } from 'lucide-react';
  */
 export const Header = ({ stats, onToggleForm }) => {
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+    <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl border border-white/20 p-6 mb-6">
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <Book className="w-8 h-8 text-indigo-600" />

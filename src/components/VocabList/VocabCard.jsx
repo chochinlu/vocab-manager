@@ -86,7 +86,7 @@ export const VocabCard = ({ vocab, onEdit, onDelete }) => {
   const posLabel = POS_OPTIONS.find(p => p.value === vocab.partOfSpeech)?.label || vocab.partOfSpeech;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 hover:shadow-xl transition">
+    <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl border border-white/20 p-6 hover:shadow-2xl transition">
       {/* 標題列 */}
       <div className="flex items-start justify-between mb-4">
         <div className="flex-1">

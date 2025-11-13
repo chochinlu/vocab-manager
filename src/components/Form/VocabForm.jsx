@@ -83,7 +83,7 @@ export const VocabForm = ({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+    <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl border border-white/20 p-6 mb-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">
         {editingVocab ? '✏️ 編輯單字' : '➕ 新增單字'}
       </h2>

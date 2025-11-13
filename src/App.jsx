@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import './utils/storage';
+import './utils/backgroundHelper'; // 背景管理輔助工具（開發用）
 
 // Hooks
 import { useVocabs } from './hooks/useVocabs';
@@ -9,6 +10,7 @@ import { useAIFeatures } from './hooks/useAIFeatures';
 
 // Components
 import { LoadingSpinner } from './components/common/LoadingSpinner';
+import { DynamicBackground } from './components/common/DynamicBackground';
 import { Header } from './components/Layout/Header';
 import { FilterBar } from './components/Search/FilterBar';
 import { VocabForm } from './components/Form/VocabForm';
@@ -201,8 +203,9 @@ const VocabManager = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4 md:p-8">
-      <div className="max-w-6xl mx-auto">
+    <DynamicBackground>
+      <div className="min-h-screen p-4 md:p-8">
+        <div className="max-w-6xl mx-auto">
         {/* 頁首 */}
         <Header
           stats={stats}
@@ -210,7 +213,7 @@ const VocabManager = () => {
         />
 
         {/* 篩選列 */}
-        <div className="bg-white rounded-lg shadow-lg p-6 mb-6">
+        <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl border border-white/20 p-6 mb-6">
           <FilterBar
             searchTerm={searchTerm}
             onSearchChange={setSearchTerm}
@@ -270,8 +273,9 @@ const VocabManager = () => {
           onEdit={handleEditVocab}
           onDelete={handleDeleteVocab}
         />
+        </div>
       </div>
-    </div>
+    </DynamicBackground>
   );
 };
 
