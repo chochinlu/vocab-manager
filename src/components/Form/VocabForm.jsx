@@ -101,7 +101,7 @@ export const VocabForm = ({
                   updateField('word', e.target.value);
                   onClearSuggestions();
                 }}
-                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                 placeholder="例如: implement 或 look after"
               />
               <button
@@ -148,7 +148,7 @@ export const VocabForm = ({
             <select
               value={formData.partOfSpeech}
               onChange={(e) => updateField('partOfSpeech', e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
             >
               {POS_OPTIONS.map(opt => (
                 <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -174,7 +174,7 @@ export const VocabForm = ({
               type="text"
               value={formData.definitionChinese}
               onChange={(e) => updateField('definitionChinese', e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
               placeholder="例如: 實作、執行"
             />
           </div>
@@ -189,7 +189,7 @@ export const VocabForm = ({
                     updateField('definitionEnglish', e.target.value);
                     setDefinitionTranslation(null);
                   }}
-                  className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                   placeholder="例如: to put into operation"
                 />
                 {formData.definitionEnglish && (
@@ -241,7 +241,7 @@ export const VocabForm = ({
             type="text"
             value={formData.phonetic}
             onChange={(e) => updateField('phonetic', e.target.value)}
-            className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
             placeholder="例如: /ˈɪm.plɪ.ment/"
           />
         </div>
@@ -266,7 +266,7 @@ export const VocabForm = ({
                 type="text"
                 value={example}
                 onChange={(e) => updateExample(index, e.target.value)}
-                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                 placeholder="例如: This method is **deprecated**"
               />
               {index === formData.examplesOriginal.length - 1 && (
@@ -289,7 +289,7 @@ export const VocabForm = ({
             <textarea
               value={formData.myExample}
               onChange={(e) => updateField('myExample', e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
               rows="2"
               placeholder="寫你自己的例句..."
             />
@@ -355,7 +355,7 @@ export const VocabForm = ({
               type="text"
               value={formData.context.source}
               onChange={(e) => updateNestedField('context', 'source', e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
               placeholder="例如: React官方文件"
             />
           </div>
@@ -365,7 +365,7 @@ export const VocabForm = ({
               type="text"
               value={formData.context.scenario}
               onChange={(e) => updateNestedField('context', 'scenario', e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
               placeholder="例如: 讀API文件時遇到"
             />
           </div>
@@ -375,7 +375,7 @@ export const VocabForm = ({
               type="text"
               value={formData.context.url}
               onChange={(e) => updateNestedField('context', 'url', e.target.value)}
-              className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
               placeholder="https://..."
             />
           </div>

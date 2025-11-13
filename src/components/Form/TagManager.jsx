@@ -21,7 +21,7 @@ export const TagManager = ({ tags, newTag, onNewTagChange, onAddTag, onRemoveTag
           value={newTag}
           onChange={(e) => onNewTagChange(e.target.value)}
           onKeyPress={handleKeyPress}
-          className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
           placeholder="輸入標籤後按 Enter"
         />
         <button

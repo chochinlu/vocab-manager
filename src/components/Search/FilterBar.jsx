@@ -30,7 +30,7 @@ export const FilterBar = ({
         <select
           value={filterPos}
           onChange={(e) => onFilterPosChange(e.target.value)}
-          className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
         >
           <option value="all">所有詞性</option>
           {POS_OPTIONS.map(opt => (
@@ -42,7 +42,7 @@ export const FilterBar = ({
         <select
           value={filterTag}
           onChange={(e) => onFilterTagChange(e.target.value)}
-          className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
         >
           <option value="all">所有標籤</option>
           {allTags.map(tag => (
@@ -54,7 +54,7 @@ export const FilterBar = ({
         <select
           value={sortBy}
           onChange={(e) => onSortByChange(e.target.value)}
-          className="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+          className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
         >
           {SORT_OPTIONS.map(opt => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
