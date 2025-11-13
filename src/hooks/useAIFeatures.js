@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import * as aiService from '../services/ai.service';
+import * as openrouterService from '../services/openrouter.service';
 import * as dictionaryService from '../services/dictionary.service';
 
 /**
@@ -14,7 +15,7 @@ export const useAIFeatures = () => {
   const [isFetchingCambridge, setIsFetchingCambridge] = useState(false);
 
   /**
-   * 檢查拼字
+   * 檢查拼字 (使用 OpenRouter 免費模型)
    */
   const checkSpelling = async (word) => {
     if (!word.trim()) {
@@ -26,7 +27,8 @@ export const useAIFeatures = () => {
     setSpellingSuggestions([]);
 
     try {
-      const result = await aiService.checkSpelling(word);
+      // 使用 OpenRouter 免費模型進行拼字檢查
+      const result = await openrouterService.checkSpelling(word);
 
       if (result.suggestions && result.suggestions.length > 0) {
         setSpellingSuggestions(result.suggestions);
@@ -34,6 +36,8 @@ export const useAIFeatures = () => {
 
       if (result.isCorrect && result.suggestions.length === 0) {
         alert('✅ 拼字正確!');
+      } else if (!result.isCorrect && result.message) {
+        alert(`💡 ${result.message}`);
       }
 
       return result;

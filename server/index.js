@@ -7,6 +7,7 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3001;
 const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+const OPENROUTER_API_KEY = process.env.OPENROUTER_API_KEY;
 
 // 中介軟體
 app.use(cors());
@@ -216,6 +217,139 @@ app.post('/api/dictionary/cambridge', async (req, res) => {
   } catch (error) {
     console.error('Cambridge Dictionary API 錯誤:', error);
     res.status(500).json({ error: '劍橋字典查詢失敗' });
+  }
+});
+
+/**
+ * OpenRouter - 翻譯例句成繁體中文
+ * POST /api/openrouter/translate
+ */
+app.post('/api/openrouter/translate', async (req, res) => {
+  const { text } = req.body;
+
+  if (!text) {
+    return res.status(400).json({ error: '請提供要翻譯的文字' });
+  }
+
+  if (!OPENROUTER_API_KEY) {
+    return res.status(500).json({ error: 'OpenRouter API Key 未設定' });
+  }
+
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'HTTP-Referer': 'http://localhost:5173',
+        'X-Title': 'Vocab Manager'
+      },
+      body: JSON.stringify({
+        model: 'openrouter/polaris-alpha',
+        messages: [{
+          role: 'user',
+          content: `請將以下英文翻譯成繁體中文（台灣用語）：
+
+"${text}"
+
+只需要回傳翻譯結果，不要其他說明。`
+        }]
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('OpenRouter API 錯誤:', data.error);
+      return res.status(500).json({ error: data.error.message || '翻譯失敗' });
+    }
+
+    // 提取翻譯結果
+    const translation = data.choices?.[0]?.message?.content || '';
+    res.json({ translation });
+  } catch (error) {
+    console.error('OpenRouter 翻譯錯誤:', error);
+    res.status(500).json({ error: '翻譯服務連線失敗' });
+  }
+});
+
+/**
+ * OpenRouter - 英文拼字檢查
+ * POST /api/openrouter/spell-check
+ */
+app.post('/api/openrouter/spell-check', async (req, res) => {
+  const { word } = req.body;
+
+  if (!word) {
+    return res.status(400).json({ error: '請提供單字' });
+  }
+
+  if (!OPENROUTER_API_KEY) {
+    return res.status(500).json({ error: 'OpenRouter API Key 未設定' });
+  }
+
+  try {
+    const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+        'HTTP-Referer': 'http://localhost:5173',
+        'X-Title': 'Vocab Manager'
+      },
+      body: JSON.stringify({
+        model: 'openrouter/polaris-alpha',
+        messages: [{
+          role: 'user',
+          content: `分析這個英文單字: "${word}"
+
+請判斷:
+1. 這是否是正確的英文單字?
+2. 如果是複數形式,單數是什麼?
+3. 如果拼字可能有錯,提供正確的拼法建議
+4. 如果是常見錯誤(如打錯、多字母、少字母),提供建議
+
+回傳 JSON 格式:
+{
+  "isCorrect": true/false,
+  "isCorrectable": true/false,
+  "message": "簡短說明",
+  "suggestions": ["建議1", "建議2", "建議3"]
+}
+
+如果單字完全正確且不是複數,suggestions 為空陣列。
+如果是複數形式,suggestions 應包含單數形式。
+請只回傳 JSON，不要其他說明。`
+        }]
+      })
+    });
+
+    const data = await response.json();
+
+    if (data.error) {
+      console.error('OpenRouter API 錯誤:', data.error);
+      return res.status(500).json({ error: data.error.message || '拼字檢查失敗' });
+    }
+
+    // 提取檢查結果
+    const result = data.choices?.[0]?.message?.content || '';
+
+    // 嘗試解析 JSON 回應
+    try {
+      const parsedResult = JSON.parse(result);
+      res.json(parsedResult);
+    } catch {
+      // 如果無法解析，回傳原始文字
+      res.json({
+        isCorrect: false,
+        isCorrectable: false,
+        message: result,
+        suggestions: []
+      });
+    }
+  } catch (error) {
+    console.error('OpenRouter 拼字檢查錯誤:', error);
+    res.status(500).json({ error: '拼字檢查服務連線失敗' });
   }
 });
 

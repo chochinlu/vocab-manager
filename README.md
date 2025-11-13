@@ -13,7 +13,8 @@
 
 ### AI 輔助功能
 
-- **拼字檢查**: 自動檢查單字拼寫並提供建議
+- **拼字檢查**: 使用 OpenRouter 免費模型自動檢查單字拼寫並提供建議
+- **例句即時翻譯**: 點擊按鈕即時將英文例句翻譯成繁體中文（不儲存，使用 OpenRouter 免費模型）
 - **例句修正**: AI 協助修正中式英文，提升例句品質
 - **字典整合**:
   - Free Dictionary API 查詢
@@ -40,7 +41,8 @@
 - **Express 5.1.0** - Node.js Web 框架
 - **CORS** - 跨域資源共享
 - **Dotenv** - 環境變數管理
-- **Anthropic Claude API** - AI 功能後端
+- **Anthropic Claude API** - AI 功能後端（例句修正、字典查詢）
+- **OpenRouter API** - 免費 AI 模型（拼字檢查、例句翻譯）
 
 ### 開發工具
 
@@ -57,15 +59,18 @@ npm install
 
 ### 2. 設定環境變數
 
-複製 `.env.example` 並重新命名為 `.env`，然後填入您的 Anthropic API Key：
+複製 `.env.example` 並重新命名為 `.env`，然後填入您的 API Keys：
 
 ```bash
 # .env
-ANTHROPIC_API_KEY=sk-ant-api03-xxxxx  # 請替換成您的 API Key
+ANTHROPIC_API_KEY=sk-ant-api03-xxxxx     # Anthropic API Key
+OPENROUTER_API_KEY=sk-or-v1-xxxxx       # OpenRouter API Key（免費）
 PORT=3001
 ```
 
-> 💡 **取得 API Key**: 前往 [Anthropic Console](https://console.anthropic.com/) 註冊並取得
+> 💡 **取得 API Keys**:
+> - **Anthropic**: 前往 [Anthropic Console](https://console.anthropic.com/) 註冊並取得
+> - **OpenRouter**: 前往 [OpenRouter](https://openrouter.ai/) 註冊並取得（提供免費模型）
 
 ### 3. 啟動開發模式
 
@@ -116,7 +121,8 @@ vocab-manager/
 │   │   └── useAIFeatures.js    # AI 功能整合
 │   ├── services/               # API 服務層
 │   │   ├── vocab.service.js    # 單字 CRUD
-│   │   ├── ai.service.js       # AI 功能
+│   │   ├── ai.service.js       # AI 功能（Anthropic Claude）
+│   │   ├── openrouter.service.js # OpenRouter AI 服務（翻譯、拼字檢查）
 │   │   ├── dictionary.service.js # 字典查詢
 │   │   └── speech.service.js   # 發音服務
 │   ├── utils/                  # 工具函數
@@ -193,24 +199,35 @@ vocab-manager/
   - 呼叫本地 Express API
 
 - **後端**: Express (Port 3001)
-  - 代理 Anthropic Claude API 請求
-  - 保護 API Key 不暴露在前端
+  - 代理 Anthropic Claude API 請求（例句修正、字典查詢）
+  - 代理 OpenRouter API 請求（拼字檢查、例句翻譯）
+  - 保護 API Keys 不暴露在前端
   - 解決 CORS 跨域問題
+
+### AI 功能架構
+
+- **Anthropic Claude**: 例句修正、字典查詢（利用 tools 功能）
+- **OpenRouter 免費模型**: 拼字檢查、例句翻譯（使用 `openrouter/polaris-alpha`）
+- **翻譯功能**: 不儲存翻譯結果，即時產生並暫時顯示
 
 ## 開發注意事項
 
-1. **環境變數**: 請確保 `.env` 檔案已正確設定 API Key
-2. **無路由設計**: 單頁應用程式，無需 React Router
-3. **API Key 安全**: API Key 儲存在後端，不暴露在前端程式碼
-4. **瀏覽器相容性**: Web Speech API 需現代瀏覽器支援
-5. **Tailwind CSS v4**: 注意與 v3 版本的差異
-6. **前後端同時運行**: 使用 `npm run dev` 即可同時啟動
+1. **環境變數**: 請確保 `.env` 檔案已正確設定 Anthropic 和 OpenRouter API Keys
+2. **OpenRouter 免費模型**: 翻譯和拼字檢查使用免費模型，無需付費
+3. **翻譯結果**: 例句翻譯不儲存至 localStorage，僅前端暫時顯示
+4. **無路由設計**: 單頁應用程式，無需 React Router
+5. **API Keys 安全**: API Keys 儲存在後端，不暴露在前端程式碼
+6. **瀏覽器相容性**: Web Speech API 需現代瀏覽器支援
+7. **Tailwind CSS v4**: 注意與 v3 版本的差異
+8. **前後端同時運行**: 使用 `npm run dev` 即可同時啟動
 
 ## 未來規劃
 
 - [x] ~~組件模組化重構 (VocabList, VocabForm, SearchBar 等)~~
 - [x] ~~API 服務層抽離~~
 - [x] ~~Express 後端 API 整合~~
+- [x] ~~OpenRouter API 整合（免費模型）~~
+- [x] ~~例句即時翻譯功能~~
 - [ ] 引入狀態管理方案 (Zustand/Redux)
 - [ ] 單元測試 (Vitest + React Testing Library)
 - [ ] 資料匯出/匯入功能
