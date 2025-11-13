@@ -1,43 +1,8 @@
 /**
- * AI 服務 - 使用 Anthropic Claude API 提供智慧功能
+ * AI 服務 - 透過本地 Express API 呼叫 Claude
  */
 
-const API_URL = 'https://api.anthropic.com/v1/messages';
-const MODEL = 'claude-sonnet-4-20250514';
-
-/**
- * 呼叫 Claude API
- * @param {string} prompt - 使用者提示
- * @param {Array} tools - 工具陣列（可選）
- * @param {number} maxTokens - 最大 token 數
- * @returns {Promise<Object>}
- */
-const callClaudeAPI = async (prompt, tools = null, maxTokens = 1000) => {
-  const body = {
-    model: MODEL,
-    max_tokens: maxTokens,
-    messages: [{
-      role: 'user',
-      content: prompt
-    }]
-  };
-
-  if (tools) {
-    body.tools = tools;
-  }
-
-  const response = await fetch(API_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body)
-  });
-
-  if (!response.ok) {
-    throw new Error(`API 請求失敗: ${response.status}`);
-  }
-
-  return await response.json();
-};
+const API_BASE_URL = 'http://localhost:3001/api';
 
 /**
  * 修正中式英文例句
@@ -51,14 +16,17 @@ export const correctExample = async (word, partOfSpeech, example) => {
     throw new Error('請先輸入你的例句');
   }
 
-  const prompt = `你是英文教學專家,專門幫華人改進中式英文。
+  const response = await fetch(`${API_BASE_URL}/ai/correct-example`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ word, partOfSpeech, example })
+  });
 
-單字: ${word} (${partOfSpeech})
-學生寫的例句: "${example}"
+  if (!response.ok) {
+    throw new Error('API 請求失敗');
+  }
 
-請直接回傳修正後的例句,不要其他說明。如果句子完全正確,就回傳原句。`;
-
-  const data = await callClaudeAPI(prompt);
+  const data = await response.json();
   return data.content[0].text.trim();
 };
 
@@ -72,26 +40,17 @@ export const checkSpelling = async (word) => {
     throw new Error('請輸入單字');
   }
 
-  const prompt = `分析這個英文單字: "${word}"
+  const response = await fetch(`${API_BASE_URL}/ai/spell-check`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ word })
+  });
 
-請判斷:
-1. 這是否是正確的英文單字?
-2. 如果是複數形式,單數是什麼?
-3. 如果拼字可能有錯,提供正確的拼法建議
-4. 如果是常見錯誤(如打錯、多字母、少字母),提供建議
+  if (!response.ok) {
+    throw new Error('API 請求失敗');
+  }
 
-回傳 JSON 格式(不要 markdown):
-{
-  "isCorrect": true/false,
-  "isCorrectable": true/false,
-  "message": "簡短說明",
-  "suggestions": ["建議1", "建議2", "建議3"]
-}
-
-如果單字完全正確且不是複數,suggestions 為空陣列。
-如果是複數形式,suggestions 應包含單數形式。`;
-
-  const data = await callClaudeAPI(prompt);
+  const data = await response.json();
   const textContent = data.content
     .filter(item => item.type === 'text')
     .map(item => item.text)

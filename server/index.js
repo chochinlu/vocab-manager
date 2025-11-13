@@ -1,0 +1,226 @@
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+
+dotenv.config();
+
+const app = express();
+const PORT = process.env.PORT || 3001;
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY;
+
+// 中介軟體
+app.use(cors());
+app.use(express.json());
+
+// 健康檢查端點
+app.get('/health', (req, res) => {
+  res.json({ status: 'ok', message: 'Vocab Manager API Server' });
+});
+
+/**
+ * AI 拼字檢查
+ * POST /api/ai/spell-check
+ */
+app.post('/api/ai/spell-check', async (req, res) => {
+  const { word } = req.body;
+
+  if (!word) {
+    return res.status(400).json({ error: '請提供單字' });
+  }
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: `分析這個英文單字: "${word}"
+
+請判斷:
+1. 這是否是正確的英文單字?
+2. 如果是複數形式,單數是什麼?
+3. 如果拼字可能有錯,提供正確的拼法建議
+4. 如果是常見錯誤(如打錯、多字母、少字母),提供建議
+
+回傳 JSON 格式(不要 markdown):
+{
+  "isCorrect": true/false,
+  "isCorrectable": true/false,
+  "message": "簡短說明",
+  "suggestions": ["建議1", "建議2", "建議3"]
+}
+
+如果單字完全正確且不是複數,suggestions 為空陣列。
+如果是複數形式,suggestions 應包含單數形式。`
+        }]
+      })
+    });
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('AI 拼字檢查錯誤:', error);
+    res.status(500).json({ error: '拼字檢查失敗' });
+  }
+});
+
+/**
+ * AI 修正例句
+ * POST /api/ai/correct-example
+ */
+app.post('/api/ai/correct-example', async (req, res) => {
+  const { word, partOfSpeech, example } = req.body;
+
+  if (!word || !example) {
+    return res.status(400).json({ error: '請提供單字和例句' });
+  }
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 1000,
+        messages: [{
+          role: 'user',
+          content: `你是英文教學專家,專門幫華人改進中式英文。
+
+單字: ${word} (${partOfSpeech})
+學生寫的例句: "${example}"
+
+請直接回傳修正後的例句,不要其他說明。如果句子完全正確,就回傳原句。`
+        }]
+      })
+    });
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('AI 修正例句錯誤:', error);
+    res.status(500).json({ error: '例句修正失敗' });
+  }
+});
+
+/**
+ * Free Dictionary API
+ * POST /api/dictionary/free
+ */
+app.post('/api/dictionary/free', async (req, res) => {
+  const { word, partOfSpeech } = req.body;
+
+  if (!word) {
+    return res.status(400).json({ error: '請提供單字' });
+  }
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 3000,
+        tools: [{
+          type: "web_fetch_20250305",
+          name: "web_fetch"
+        }],
+        messages: [{
+          role: 'user',
+          content: `Fetch https://api.dictionaryapi.dev/api/v2/entries/en/${word} and extract data for ${partOfSpeech}. Include phonetic, definition, audioUrlUK, audioUrlUS (from phonetics array), and examples.`
+        }]
+      })
+    });
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('Free Dictionary API 錯誤:', error);
+    res.status(500).json({ error: 'Free Dictionary 查詢失敗' });
+  }
+});
+
+/**
+ * Cambridge Dictionary API
+ * POST /api/dictionary/cambridge
+ */
+app.post('/api/dictionary/cambridge', async (req, res) => {
+  const { word, partOfSpeech, posLabel } = req.body;
+
+  if (!word) {
+    return res.status(400).json({ error: '請提供單字' });
+  }
+
+  try {
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': ANTHROPIC_API_KEY,
+        'anthropic-version': '2023-06-01'
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 3000,
+        tools: [
+          {
+            type: "web_search_20250305",
+            name: "web_search"
+          },
+          {
+            type: "web_fetch_20250305",
+            name: "web_fetch"
+          }
+        ],
+        messages: [{
+          role: 'user',
+          content: `請幫我從劍橋字典查詢單字 "${word}" 作為 ${partOfSpeech} (${posLabel}) 的資料。
+
+步驟:
+1. 先用 web_search 搜尋: cambridge dictionary ${word}
+2. 找到劍橋字典的 URL 後,用 web_fetch 抓取完整內容
+3. 從網頁中找出對應詞性 (${partOfSpeech}) 的資料
+
+然後回傳 JSON 格式(不要 markdown):
+{
+  "phonetic": "音標 (如 /ˈɪm.plɪ.ment/)",
+  "definition": "該詞性的英文定義",
+  "examples": ["例句1 (用 **粗體** 標記片語動詞或固定搭配)", "例句2"]
+}
+
+重要:
+- 只抓取 ${partOfSpeech} 詞性的資料,不要其他詞性
+- examples 中的片語動詞或固定搭配用 **粗體** 標記
+- 如果找不到該詞性,回傳 null
+- 不需要音檔 URL,我們用 Web Speech API`
+        }]
+      })
+    });
+
+    const data = await response.json();
+    res.json(data);
+  } catch (error) {
+    console.error('Cambridge Dictionary API 錯誤:', error);
+    res.status(500).json({ error: '劍橋字典查詢失敗' });
+  }
+});
+
+// 啟動伺服器
+app.listen(PORT, () => {
+  console.log(`🚀 API Server 運行於 http://localhost:${PORT}`);
+  console.log(`📚 健康檢查: http://localhost:${PORT}/health`);
+});

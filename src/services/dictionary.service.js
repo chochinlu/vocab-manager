@@ -1,9 +1,8 @@
 /**
- * 字典服務 - 整合 Free Dictionary API 和劍橋字典
+ * 字典服務 - 透過本地 Express API 整合字典功能
  */
 
-const API_URL = 'https://api.anthropic.com/v1/messages';
-const MODEL = 'claude-sonnet-4-20250514';
+const API_BASE_URL = 'http://localhost:3001/api';
 
 /**
  * 詞性選項對照表
@@ -36,23 +35,16 @@ export const fetchFreeDictionaryData = async (word, partOfSpeech) => {
     throw new Error('FREE_DICT_PHRASE_NOT_SUPPORTED');
   }
 
-  // 步驟1: 抓取 Free Dictionary API 資料
-  const response = await fetch(API_URL, {
+  // 步驟1: 呼叫本地 API
+  const response = await fetch(`${API_BASE_URL}/dictionary/free`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 3000,
-      tools: [{
-        type: "web_fetch_20250305",
-        name: "web_fetch"
-      }],
-      messages: [{
-        role: 'user',
-        content: `Fetch https://api.dictionaryapi.dev/api/v2/entries/en/${cleanWord} and extract data for ${partOfSpeech}. Include phonetic, definition, audioUrlUK, audioUrlUS (from phonetics array), and examples.`
-      }]
-    })
+    body: JSON.stringify({ word: cleanWord, partOfSpeech })
   });
+
+  if (!response.ok) {
+    throw new Error('API 請求失敗');
+  }
 
   const data = await response.json();
   const rawText = data.content
@@ -64,24 +56,10 @@ export const fetchFreeDictionaryData = async (word, partOfSpeech) => {
   console.log('Free Dictionary raw data:', rawText);
 
   // 步驟2: 用 AI 整理成純 JSON
-  const extractResponse = await fetch(API_URL, {
+  const extractResponse = await fetch(`${API_BASE_URL}/dictionary/free`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 2000,
-      messages: [{
-        role: 'user',
-        content: `Extract JSON from this Free Dictionary data for "${cleanWord}" (${partOfSpeech}):
-
-${rawText}
-
-Return ONLY this JSON structure:
-{"phonetic":"...","definition":"...","audioUrlUK":"...","audioUrlUS":"...","examples":["..."]}
-
-Audio URLs should be from phonetics array containing '-uk' or '-us'. Return ONLY JSON or null.`
-      }]
-    })
+    body: JSON.stringify({ word: cleanWord, partOfSpeech })
   });
 
   const extractData = await extractResponse.json();
@@ -133,46 +111,15 @@ export const fetchCambridgeData = async (word, partOfSpeech) => {
   const cleanWord = word.trim().toLowerCase();
   const posLabel = POS_OPTIONS.find(p => p.value === partOfSpeech)?.label || partOfSpeech;
 
-  const response = await fetch(API_URL, {
+  const response = await fetch(`${API_BASE_URL}/dictionary/cambridge`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      model: MODEL,
-      max_tokens: 3000,
-      tools: [
-        {
-          type: "web_search_20250305",
-          name: "web_search"
-        },
-        {
-          type: "web_fetch_20250305",
-          name: "web_fetch"
-        }
-      ],
-      messages: [{
-        role: 'user',
-        content: `請幫我從劍橋字典查詢單字 "${cleanWord}" 作為 ${partOfSpeech} (${posLabel}) 的資料。
-
-步驟:
-1. 先用 web_search 搜尋: cambridge dictionary ${cleanWord}
-2. 找到劍橋字典的 URL 後,用 web_fetch 抓取完整內容
-3. 從網頁中找出對應詞性 (${partOfSpeech}) 的資料
-
-然後回傳 JSON 格式(不要 markdown):
-{
-  "phonetic": "音標 (如 /ˈɪm.plɪ.ment/)",
-  "definition": "該詞性的英文定義",
-  "examples": ["例句1 (用 **粗體** 標記片語動詞或固定搭配)", "例句2"]
-}
-
-重要:
-- 只抓取 ${partOfSpeech} 詞性的資料,不要其他詞性
-- examples 中的片語動詞或固定搭配用 **粗體** 標記
-- 如果找不到該詞性,回傳 null
-- 不需要音檔 URL,我們用 Web Speech API`
-      }]
-    })
+    body: JSON.stringify({ word: cleanWord, partOfSpeech, posLabel })
   });
+
+  if (!response.ok) {
+    throw new Error('API 請求失敗');
+  }
 
   const data = await response.json();
   const textContent = data.content
