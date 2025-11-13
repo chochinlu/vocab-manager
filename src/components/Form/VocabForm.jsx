@@ -1,9 +1,10 @@
-import React from 'react';
-import { Check, X, RefreshCw, Plus, Edit2, Volume2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Check, X, RefreshCw, Plus, Edit2, Volume2, AlertTriangle, Languages, Loader2 } from 'lucide-react';
 import { POS_OPTIONS } from '../../utils/constants';
 import { AITools } from './AITools';
 import { TagManager } from './TagManager';
 import { PronunciationGroup } from '../common/PronunciationButton';
+import { translateToTraditionalChinese } from '../../services/openrouter.service';
 
 /**
  * 單字表單組件
@@ -14,6 +15,7 @@ export const VocabForm = ({
   editingVocab,
   newTag,
   spellingSuggestions,
+  warningMessage,
   isCheckingSpelling,
   isCorrectingExample,
   isFetchingFreeDictionary,
@@ -23,6 +25,7 @@ export const VocabForm = ({
   onCheckSpelling,
   onUseSuggestion,
   onClearSuggestions,
+  onClearWarning,
   onCorrectExample,
   onFetchFreeDictionary,
   onFetchCambridge,
@@ -32,6 +35,11 @@ export const VocabForm = ({
   onSave,
   onCancel
 }) => {
+  // 英文定義翻譯狀態
+  const [definitionTranslation, setDefinitionTranslation] = useState(null);
+  const [isTranslatingDefinition, setIsTranslatingDefinition] = useState(false);
+  const [definitionTranslationError, setDefinitionTranslationError] = useState(null);
+
   const updateField = (field, value) => {
     onFormDataChange({ ...formData, [field]: value });
   };
@@ -47,6 +55,31 @@ export const VocabForm = ({
     const newExamples = [...formData.examplesOriginal];
     newExamples[index] = value;
     onFormDataChange({ ...formData, examplesOriginal: newExamples });
+  };
+
+  // 處理英文定義翻譯
+  const handleTranslateDefinition = async () => {
+    if (definitionTranslation) {
+      setDefinitionTranslation(null);
+      return;
+    }
+
+    if (!formData.definitionEnglish?.trim()) {
+      return;
+    }
+
+    setIsTranslatingDefinition(true);
+    setDefinitionTranslationError(null);
+
+    try {
+      const result = await translateToTraditionalChinese(formData.definitionEnglish);
+      setDefinitionTranslation(result);
+    } catch (err) {
+      setDefinitionTranslationError(err.message);
+      console.error('翻譯錯誤:', err);
+    } finally {
+      setIsTranslatingDefinition(false);
+    }
   };
 
   return (
@@ -147,16 +180,55 @@ export const VocabForm = ({
           </div>
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">英文解釋</label>
-            <div className="flex gap-2">
-              <input
-                type="text"
-                value={formData.definitionEnglish}
-                onChange={(e) => updateField('definitionEnglish', e.target.value)}
-                className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
-                placeholder="例如: to put into operation"
-              />
-              {formData.definitionEnglish && (
-                <PronunciationGroup text={formData.definitionEnglish} isSentence />
+            <div className="space-y-2">
+              <div className="flex gap-2 group">
+                <input
+                  type="text"
+                  value={formData.definitionEnglish}
+                  onChange={(e) => {
+                    updateField('definitionEnglish', e.target.value);
+                    setDefinitionTranslation(null);
+                  }}
+                  className="flex-1 px-4 py-2 border rounded-lg focus:ring-2 focus:ring-indigo-500"
+                  placeholder="例如: to put into operation"
+                />
+                {formData.definitionEnglish && (
+                  <div className="flex gap-1">
+                    <PronunciationGroup text={formData.definitionEnglish} isSentence />
+                    <button
+                      onClick={handleTranslateDefinition}
+                      disabled={isTranslatingDefinition}
+                      type="button"
+                      className={`flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors ${
+                        definitionTranslation
+                          ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                          : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                      } disabled:opacity-50 disabled:cursor-not-allowed`}
+                      title={definitionTranslation ? '隱藏翻譯' : '翻譯成中文'}
+                    >
+                      {isTranslatingDefinition ? (
+                        <Loader2 className="w-3 h-3 animate-spin" />
+                      ) : (
+                        <Languages className="w-3 h-3" />
+                      )}
+                      <span>{definitionTranslation ? '隱藏' : '翻譯'}</span>
+                    </button>
+                  </div>
+                )}
+              </div>
+
+              {/* 顯示翻譯結果 */}
+              {definitionTranslation && (
+                <div className="ml-2 pl-3 border-l-2 border-blue-300 bg-blue-50 rounded-r px-3 py-2">
+                  <p className="text-sm text-blue-900">{definitionTranslation}</p>
+                </div>
+              )}
+
+              {/* 顯示錯誤訊息 */}
+              {definitionTranslationError && (
+                <div className="ml-2 pl-3 border-l-2 border-red-300 bg-red-50 rounded-r px-3 py-2">
+                  <p className="text-xs text-red-700">{definitionTranslationError}</p>
+                </div>
               )}
             </div>
           </div>
@@ -239,6 +311,33 @@ export const VocabForm = ({
                 </>
               )}
             </button>
+
+            {/* 警告訊息：修正後不包含目標單字 */}
+            {warningMessage && (
+              <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-4 relative">
+                <button
+                  onClick={onClearWarning}
+                  className="absolute top-2 right-2 text-amber-600 hover:text-amber-800 transition"
+                  title="關閉警告"
+                  type="button"
+                >
+                  <X className="w-5 h-5" />
+                </button>
+                <div className="flex items-start gap-3">
+                  <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                  <div className="flex-1">
+                    <p className="font-medium text-amber-900 mb-2">
+                      注意：修正後的句子沒有包含單字 <span className="font-bold">"{warningMessage.word}"</span>
+                    </p>
+                    <div className="bg-white rounded-lg p-3 border border-amber-200">
+                      <p className="text-sm font-medium text-amber-800 mb-1">💡 如果要使用 "{warningMessage.word}"，可以這樣寫：</p>
+                      <p className="text-amber-900 text-sm italic">"{warningMessage.suggestion}"</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
             {formData.aiCorrected && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-3">
                 <p className="text-sm font-medium text-green-800 mb-1">AI 修正結果:</p>

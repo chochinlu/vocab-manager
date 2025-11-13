@@ -49,11 +49,14 @@ const VocabManager = () => {
     editingVocab,
     newTag,
     setNewTag,
+    warningMessage,
+    setWarningMessage,
     loadVocabToForm,
     resetForm,
     validateForm,
     addTag,
-    removeTag
+    removeTag,
+    clearWarning
   } = useVocabForm();
 
   // AI 功能
@@ -126,12 +129,24 @@ const VocabManager = () => {
   // 處理例句修正
   const handleCorrectExample = async () => {
     try {
-      const corrected = await correctExample(
+      const result = await correctExample(
         formData.word,
         formData.partOfSpeech,
         formData.myExample
       );
-      setFormData({ ...formData, aiCorrected: corrected });
+
+      if (result) {
+        setFormData({
+          ...formData,
+          aiCorrected: result.corrected,
+          aiSuggestion: result.suggestion || ''
+        });
+
+        // 如果有警告訊息，設定到狀態中
+        if (result.warning) {
+          setWarningMessage(result.warning);
+        }
+      }
     } catch {
       // 錯誤已在 hook 中處理
     }
@@ -223,6 +238,7 @@ const VocabManager = () => {
             editingVocab={editingVocab}
             newTag={newTag}
             spellingSuggestions={spellingSuggestions}
+            warningMessage={warningMessage}
             isCheckingSpelling={isCheckingSpelling}
             isCorrectingExample={isCorrectingExample}
             isFetchingFreeDictionary={isFetchingFreeDictionary}
@@ -232,6 +248,7 @@ const VocabManager = () => {
             onCheckSpelling={handleCheckSpelling}
             onUseSuggestion={handleUseSuggestion}
             onClearSuggestions={clearSpellingSuggestions}
+            onClearWarning={clearWarning}
             onCorrectExample={handleCorrectExample}
             onFetchFreeDictionary={handleFetchFreeDictionary}
             onFetchCambridge={handleFetchCambridge}

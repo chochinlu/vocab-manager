@@ -1,8 +1,83 @@
-import React from 'react';
-import { Edit2, Trash2, Tag, Calendar, Volume2 } from 'lucide-react';
+import React, { useState } from 'react';
+import { Edit2, Trash2, Tag, Calendar, Languages, Loader2 } from 'lucide-react';
 import { POS_OPTIONS } from '../../utils/constants';
 import { PronunciationGroup, PronunciationButton } from '../common/PronunciationButton';
 import { ExampleSection } from './ExampleSection';
+import { translateToTraditionalChinese } from '../../services/openrouter.service';
+
+/**
+ * 英文定義項目組件（帶翻譯功能）
+ */
+const DefinitionItem = ({ definition }) => {
+  const [translation, setTranslation] = useState(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleTranslate = async () => {
+    if (translation) {
+      setTranslation(null);
+      return;
+    }
+
+    setIsTranslating(true);
+    setError(null);
+
+    try {
+      const result = await translateToTraditionalChinese(definition);
+      setTranslation(result);
+    } catch (err) {
+      setError(err.message);
+      console.error('翻譯錯誤:', err);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  return (
+    <div className="space-y-1">
+      <div className="flex items-start gap-2 group">
+        <div className="flex-1">
+          <span className="font-medium text-gray-700">English: </span>
+          <span className="text-gray-600">{definition}</span>
+        </div>
+        <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          <PronunciationGroup text={definition} isSentence />
+          <button
+            onClick={handleTranslate}
+            disabled={isTranslating}
+            className={`flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors ${
+              translation
+                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+            title={translation ? '隱藏翻譯' : '翻譯成中文'}
+          >
+            {isTranslating ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : (
+              <Languages className="w-3 h-3" />
+            )}
+            <span>{translation ? '隱藏' : '翻譯'}</span>
+          </button>
+        </div>
+      </div>
+
+      {/* 顯示翻譯結果 */}
+      {translation && (
+        <div className="ml-20 pl-3 border-l-2 border-blue-300 bg-blue-50 rounded-r px-3 py-2">
+          <p className="text-sm text-blue-900">{translation}</p>
+        </div>
+      )}
+
+      {/* 顯示錯誤訊息 */}
+      {error && (
+        <div className="ml-20 pl-3 border-l-2 border-red-300 bg-red-50 rounded-r px-3 py-2">
+          <p className="text-xs text-red-700">{error}</p>
+        </div>
+      )}
+    </div>
+  );
+};
 
 /**
  * 單字卡片組件
@@ -61,15 +136,7 @@ export const VocabCard = ({ vocab, onEdit, onDelete }) => {
           </div>
         )}
         {vocab.definitions.english && (
-          <div className="flex items-start gap-2 group">
-            <div className="flex-1">
-              <span className="font-medium text-gray-700">English: </span>
-              <span className="text-gray-600">{vocab.definitions.english}</span>
-            </div>
-            <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-              <PronunciationGroup text={vocab.definitions.english} isSentence />
-            </div>
-          </div>
+          <DefinitionItem definition={vocab.definitions.english} />
         )}
 
         {/* 例句 */}

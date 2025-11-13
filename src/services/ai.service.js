@@ -9,7 +9,7 @@ const API_BASE_URL = 'http://localhost:3001/api';
  * @param {string} word - 單字
  * @param {string} partOfSpeech - 詞性
  * @param {string} example - 學生寫的例句
- * @returns {Promise<string>} 修正後的例句
+ * @returns {Promise<Object>} { corrected, containsTarget, suggestion }
  */
 export const correctExample = async (word, partOfSpeech, example) => {
   if (!example.trim()) {
@@ -27,7 +27,32 @@ export const correctExample = async (word, partOfSpeech, example) => {
   }
 
   const data = await response.json();
-  return data.content[0].text.trim();
+  const textContent = data.content[0].text.trim();
+
+  // 嘗試解析 JSON 回應
+  try {
+    // 清除可能的 markdown 標記
+    const cleanJson = textContent
+      .replace(/```json\n?/g, '')
+      .replace(/```\n?/g, '')
+      .trim();
+
+    const result = JSON.parse(cleanJson);
+
+    return {
+      corrected: result.corrected || textContent,
+      containsTarget: result.containsTarget !== false, // 預設為 true
+      suggestion: result.suggestion || null
+    };
+  } catch (parseError) {
+    // 如果無法解析，回傳舊格式（向後相容）
+    console.warn('無法解析 AI 回應為 JSON，使用舊格式:', parseError);
+    return {
+      corrected: textContent,
+      containsTarget: true,
+      suggestion: null
+    };
+  }
 };
 
 /**

@@ -51,18 +51,31 @@ export const useAIFeatures = () => {
 
   /**
    * 修正例句
+   * @returns {Promise<Object>} { corrected, containsTarget, suggestion, warning }
    */
   const correctExample = async (word, partOfSpeech, example) => {
     if (!example.trim()) {
       alert('請先輸入你的例句');
-      return;
+      return null;
     }
 
     setIsCorrectingExample(true);
 
     try {
-      const corrected = await aiService.correctExample(word, partOfSpeech, example);
-      return corrected;
+      const result = await aiService.correctExample(word, partOfSpeech, example);
+
+      // 如果修正後不包含目標單字，返回警告訊息（不使用 alert）
+      if (!result.containsTarget && result.suggestion) {
+        return {
+          ...result,
+          warning: {
+            word: word,
+            suggestion: result.suggestion
+          }
+        };
+      }
+
+      return result;
     } catch (error) {
       alert('AI 修正失敗: ' + error.message);
       throw error;

@@ -43,7 +43,8 @@ export const saveVocab = async (vocabData, editingVocab = null) => {
     examples: {
       original: vocabData.examplesOriginal?.filter(e => e.trim()) || [],
       myOwn: vocabData.myExample || '',
-      aiCorrected: vocabData.aiCorrected || ''
+      aiCorrected: vocabData.aiCorrected || '',
+      aiSuggestion: vocabData.aiSuggestion || ''
     },
     pronunciation: {
       phonetic: vocabData.phonetic || '',

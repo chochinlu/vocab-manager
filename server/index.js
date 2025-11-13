@@ -93,15 +93,30 @@ app.post('/api/ai/correct-example', async (req, res) => {
       },
       body: JSON.stringify({
         model: 'claude-sonnet-4-20250514',
-        max_tokens: 1000,
+        max_tokens: 1500,
         messages: [{
           role: 'user',
           content: `你是英文教學專家,專門幫華人改進中式英文。
 
-單字: ${word} (${partOfSpeech})
+目標單字/片語: ${word} (${partOfSpeech})
 學生寫的例句: "${example}"
 
-請直接回傳修正後的例句,不要其他說明。如果句子完全正確,就回傳原句。`
+任務:
+1. 修正中式英文，提供更自然的英文表達
+2. 檢查修正後的句子是否包含目標單字/片語 "${word}"
+3. 如果修正後的句子沒有包含目標單字/片語，請額外提供一個使用該單字的建議例句
+
+回傳 JSON 格式:
+{
+  "corrected": "修正後的例句（如果完全正確就是原句）",
+  "containsTarget": true/false,
+  "suggestion": "如果修正後不包含目標單字，提供一個使用該單字的建議例句（否則為 null）"
+}
+
+重要:
+- 只回傳 JSON，不要 markdown 格式標記
+- 如果修正後的句子已包含目標單字，suggestion 必須是 null
+- suggestion 應該是一個完整、自然的例句`
         }]
       })
     });

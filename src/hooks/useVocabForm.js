@@ -8,6 +8,7 @@ const initialFormData = {
   examplesOriginal: [''],
   myExample: '',
   aiCorrected: '',
+  aiSuggestion: '',
   phonetic: '',
   audioUrl: '',
   audioUrlUK: '',
@@ -24,6 +25,7 @@ export const useVocabForm = () => {
   const [formData, setFormData] = useState(initialFormData);
   const [editingVocab, setEditingVocab] = useState(null);
   const [newTag, setNewTag] = useState('');
+  const [warningMessage, setWarningMessage] = useState(null);
 
   // 更新表單欄位
   const updateField = (field, value) => {
@@ -96,6 +98,7 @@ export const useVocabForm = () => {
       examplesOriginal: vocab.examples.original.length > 0 ? vocab.examples.original : [''],
       myExample: vocab.examples.myOwn,
       aiCorrected: vocab.examples.aiCorrected,
+      aiSuggestion: vocab.examples.aiSuggestion || '',
       phonetic: vocab.pronunciation.phonetic,
       audioUrl: vocab.pronunciation.audioUrl,
       audioUrlUK: vocab.pronunciation.audioUrlUK,
@@ -110,6 +113,12 @@ export const useVocabForm = () => {
     setFormData(initialFormData);
     setEditingVocab(null);
     setNewTag('');
+    setWarningMessage(null);
+  };
+
+  // 清除警告訊息
+  const clearWarning = () => {
+    setWarningMessage(null);
   };
 
   // 驗證表單
@@ -127,6 +136,8 @@ export const useVocabForm = () => {
     setEditingVocab,
     newTag,
     setNewTag,
+    warningMessage,
+    setWarningMessage,
     updateField,
     updateNestedField,
     updateExample,
@@ -136,6 +147,7 @@ export const useVocabForm = () => {
     removeTag,
     loadVocabToForm,
     resetForm,
-    validateForm
+    validateForm,
+    clearWarning
   };
 };

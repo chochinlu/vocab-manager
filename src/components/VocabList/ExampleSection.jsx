@@ -112,6 +112,83 @@ export const ExampleSection = ({ examples }) => {
               <AICorrectedExampleItem example={examples.aiCorrected} />
             </div>
           )}
+
+          {/* AI 建議 */}
+          {examples.aiSuggestion && (
+            <div className="mt-3 pt-3 border-t border-amber-200">
+              <p className="font-medium text-amber-800 text-sm mb-2">💡 AI 建議（使用目標單字）:</p>
+              <AISuggestionItem example={examples.aiSuggestion} />
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  );
+};
+
+/**
+ * AI 建議例句項目組件（帶翻譯功能）
+ */
+const AISuggestionItem = ({ example }) => {
+  const [translation, setTranslation] = useState(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [error, setError] = useState(null);
+
+  const handleTranslate = async () => {
+    if (translation) {
+      setTranslation(null);
+      return;
+    }
+
+    setIsTranslating(true);
+    setError(null);
+
+    try {
+      const result = await translateToTraditionalChinese(example);
+      setTranslation(result);
+    } catch (err) {
+      setError(err.message);
+      console.error('翻譯錯誤:', err);
+    } finally {
+      setIsTranslating(false);
+    }
+  };
+
+  return (
+    <div className="space-y-1">
+      <div className="flex items-start gap-2 group">
+        <div className="flex gap-1 pt-0.5 opacity-0 group-hover:opacity-100 transition-opacity">
+          <PronunciationGroup text={example} isSentence />
+        </div>
+        <p className="text-amber-900 text-sm flex-1">{example}</p>
+        <button
+          onClick={handleTranslate}
+          disabled={isTranslating}
+          className={`flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors opacity-0 group-hover:opacity-100 ${
+            translation
+              ? 'bg-amber-200 text-amber-800 hover:bg-amber-300'
+              : 'bg-white text-amber-700 hover:bg-amber-100'
+          } disabled:opacity-50 disabled:cursor-not-allowed`}
+          title={translation ? '隱藏翻譯' : '翻譯成中文'}
+        >
+          {isTranslating ? (
+            <Loader2 className="w-3 h-3 animate-spin" />
+          ) : (
+            <Languages className="w-3 h-3" />
+          )}
+          <span>{translation ? '隱藏' : '翻譯'}</span>
+        </button>
+      </div>
+
+      {translation && (
+        <div className="ml-8 pl-3 border-l-2 border-amber-400 bg-white rounded-r px-3 py-2">
+          <p className="text-sm text-amber-900">{translation}</p>
+        </div>
+      )}
+
+      {error && (
+        <div className="ml-8 pl-3 border-l-2 border-red-300 bg-red-50 rounded-r px-3 py-2">
+          <p className="text-xs text-red-700">{error}</p>
         </div>
       )}
     </div>
