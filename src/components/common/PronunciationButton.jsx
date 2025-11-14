@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Volume2 } from 'lucide-react';
+import { useToastContext } from '../../contexts/ToastContext';
 import { playPronunciation } from '../../services/speech.service';
 
 /**
@@ -10,6 +11,7 @@ import { playPronunciation } from '../../services/speech.service';
  * @param {string} label - 按鈕標籤
  */
 export const PronunciationButton = ({ text, accent = 'us', isSentence = false, label }) => {
+  const { showError } = useToastContext();
   const [isPlaying, setIsPlaying] = useState(false);
 
   const handlePlay = async () => {
@@ -20,7 +22,7 @@ export const PronunciationButton = ({ text, accent = 'us', isSentence = false, l
       await playPronunciation(text, accent, isSentence);
     } catch (error) {
       console.error('播放失敗:', error);
-      alert(error.message);
+      showError(error.message);
     } finally {
       setIsPlaying(false);
     }

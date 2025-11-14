@@ -7,6 +7,7 @@ import { useVocabs } from './hooks/useVocabs';
 import { useVocabFilters } from './hooks/useVocabFilters';
 import { useVocabForm } from './hooks/useVocabForm';
 import { useAIFeatures } from './hooks/useAIFeatures';
+import { useToastContext } from './contexts/ToastContext';
 
 // Components
 import { LoadingSpinner } from './components/common/LoadingSpinner';
@@ -24,6 +25,9 @@ import { VocabList } from './components/VocabList/VocabList';
 const VocabManager = () => {
   // UI 狀態
   const [showAddForm, setShowAddForm] = useState(false);
+
+  // Toast 通知系統
+  const { showSuccess, showError } = useToastContext();
 
   // 單字資料管理
   const { vocabs, loading, saveVocab, deleteVocab } = useVocabs();
@@ -93,9 +97,9 @@ const VocabManager = () => {
       await saveVocab(formData, editingVocab);
       resetForm();
       setShowAddForm(false);
-      alert(editingVocab ? '✅ 單字已更新!' : '✅ 單字已新增!');
+      showSuccess(editingVocab ? '單字已更新!' : '單字已新增!');
     } catch (error) {
-      alert(error.message);
+      showError(error.message);
     }
   };
 
@@ -105,9 +109,9 @@ const VocabManager = () => {
 
     try {
       await deleteVocab(id);
-      alert('✅ 單字已刪除!');
+      showSuccess('單字已刪除!');
     } catch (error) {
-      alert('刪除失敗: ' + error.message);
+      showError('刪除失敗: ' + error.message);
     }
   };
 
