@@ -12,10 +12,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 架構特色
 
-✅ **模組化組件設計** - 25 個精簡組件，清晰的職責分離
+✅ **模組化組件設計** - 27 個精簡組件，清晰的職責分離
 ✅ **前後端分離** - Express 代理 AI API 和 Unsplash API，解決 CORS 問題
 ✅ **API Key 安全** - 後端管理，不暴露在前端
 ✅ **自訂 Hooks** - 可重用的狀態邏輯
+✅ **React Context** - Toast 通知系統使用 Context 管理全域狀態
 ✅ **服務層抽離** - API 邏輯獨立管理
 ✅ **動態背景圖片** - Unsplash API 提供高品質背景，支援多種主題與快取機制
 
@@ -57,6 +58,9 @@ npm run preview
   - `LoadingSpinner.jsx` - 載入中畫面
   - `PronunciationButton.jsx` - 發音按鈕與按鈕組
   - `DynamicBackground.jsx` - 動態背景圖片組件（Unsplash API）
+  - `Toast.jsx` - 單一 Toast 通知訊息
+  - `ToastContainer.jsx` - Toast 通知容器
+  - `FloatingActionButtons.jsx` - 浮動動作按鈕（新增單字 + 回到頂部）
 
 - **Layout/** - 版面組件
   - `Header.jsx` - 頁首（標題、統計、新增按鈕）
@@ -75,11 +79,15 @@ npm run preview
   - `VocabCard.jsx` - 單字卡片
   - `ExampleSection.jsx` - 例句顯示區塊
 
+#### Context 層 (contexts/)
+- `ToastContext.jsx` - Toast 通知系統全域狀態管理
+
 #### Hooks 層 (hooks/)
 - `useVocabs.js` - 單字資料管理 (CRUD)
 - `useVocabFilters.js` - 篩選與排序邏輯
 - `useVocabForm.js` - 表單狀態管理
 - `useAIFeatures.js` - AI 功能整合
+- `useToast.js` - Toast 通知狀態管理
 
 #### 服務層 (services/)
 - `vocab.service.js` - 單字 CRUD 操作
@@ -285,15 +293,17 @@ npm run preview
 ✅ **例句即時翻譯功能** - 不儲存翻譯，節省空間
 ✅ **英文定義翻譯功能** - 在瀏覽和編輯介面翻譯英文定義
 ✅ **Unsplash API 動態背景圖片** - 高品質背景圖片，支援多種主題與快取機制
+✅ **Toast 通知系統** - 取代 alert，使用 React Context 提供優雅的通知體驗
+✅ **浮動動作按鈕** - 右下角快速新增單字 + 回到頂部按鈕
 
 ## 未來改進方向
 
 1. 背景圖片設定介面（主題切換、模式選擇的 UI 介面）
-2. 使用 React Context 或狀態管理庫 (Zustand/Redux)
-3. 加入單元測試 (Vitest + React Testing Library)
-4. 實作資料匯出/匯入功能
-5. 加入間隔重複學習 (Spaced Repetition) 演算法
-6. 多語言介面支援
+2. 加入單元測試 (Vitest + React Testing Library)
+3. 實作資料匯出/匯入功能
+4. 加入間隔重複學習 (Spaced Repetition) 演算法
+5. 多語言介面支援
+6. 引入狀態管理庫 (Zustand/Redux)（若應用規模持續擴大）
 7. 遷移到 Next.js（長期目標，獲得更好的 SSR 和 API Routes 支援）
 
 ## 參考文件

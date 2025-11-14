@@ -115,16 +115,19 @@ npm run preview
 vocab-manager/
 ├── src/                        # 前端程式碼
 │   ├── components/             # React 組件
-│   │   ├── common/             # 共用組件 (LoadingSpinner, PronunciationButton, DynamicBackground)
+│   │   ├── common/             # 共用組件 (LoadingSpinner, PronunciationButton, DynamicBackground, Toast, ToastContainer, FloatingActionButtons)
 │   │   ├── Layout/             # 版面組件 (Header)
 │   │   ├── Search/             # 搜尋與篩選 (SearchBar, FilterBar)
 │   │   ├── Form/               # 表單組件 (VocabForm, AITools, TagManager)
 │   │   └── VocabList/          # 單字列表 (VocabList, VocabCard, ExampleSection)
+│   ├── contexts/               # React Context
+│   │   └── ToastContext.jsx    # Toast 通知系統 Context
 │   ├── hooks/                  # 自訂 Hooks
 │   │   ├── useVocabs.js        # 單字資料管理
 │   │   ├── useVocabFilters.js  # 篩選與排序
 │   │   ├── useVocabForm.js     # 表單狀態管理
-│   │   └── useAIFeatures.js    # AI 功能整合
+│   │   ├── useAIFeatures.js    # AI 功能整合
+│   │   └── useToast.js         # Toast 通知狀態管理
 │   ├── services/               # API 服務層
 │   │   ├── vocab.service.js    # 單字 CRUD
 │   │   ├── ai.service.js       # AI 功能（Anthropic Claude）
@@ -248,12 +251,14 @@ vocab-manager/
 - [x] ~~例句即時翻譯功能~~
 - [x] ~~英文定義翻譯功能~~
 - [x] ~~Unsplash API 動態背景圖片~~
+- [x] ~~Toast 通知系統（取代 alert）~~
+- [x] ~~浮動動作按鈕（快速新增單字 + 回到頂部）~~
 - [ ] 背景圖片設定介面（主題切換、模式選擇）
-- [ ] 引入狀態管理方案 (Zustand/Redux)
 - [ ] 單元測試 (Vitest + React Testing Library)
 - [ ] 資料匯出/匯入功能
 - [ ] 間隔重複學習 (Spaced Repetition) 演算法
 - [ ] 多語言介面支援
+- [ ] 引入狀態管理方案 (Zustand/Redux)
 - [ ] 遷移到 Next.js (長期目標)
 
 ## 授權

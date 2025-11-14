@@ -12,7 +12,7 @@ import { useToastContext } from './contexts/ToastContext';
 // Components
 import { LoadingSpinner } from './components/common/LoadingSpinner';
 import { DynamicBackground } from './components/common/DynamicBackground';
-import { BackToTop } from './components/common/BackToTop';
+import { FloatingActionButtons } from './components/common/FloatingActionButtons';
 import { Header } from './components/Layout/Header';
 import { FilterBar } from './components/Search/FilterBar';
 import { VocabForm } from './components/Form/VocabForm';
@@ -86,6 +86,13 @@ const VocabManager = () => {
       setShowAddForm(false);
       resetForm();
     } else {
+      setShowAddForm(true);
+    }
+  };
+
+  // 處理從浮動按鈕新增單字（總是打開表單）
+  const handleAddVocabFromFloating = () => {
+    if (!showAddForm) {
       setShowAddForm(true);
     }
   };
@@ -281,8 +288,8 @@ const VocabManager = () => {
         </div>
       </div>
 
-      {/* Back to Top 按鈕 */}
-      <BackToTop />
+      {/* 浮動動作按鈕 */}
+      <FloatingActionButtons onAddVocab={handleAddVocabFromFloating} />
     </DynamicBackground>
   );
 };
