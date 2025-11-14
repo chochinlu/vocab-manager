@@ -123,7 +123,7 @@ npm run preview
    - 輸入: `{ word, partOfSpeech, posLabel }`
    - 使用 Claude 的 `web_search` + `web_fetch` tools
 
-**OpenRouter API 端點（使用免費模型 `openrouter/polaris-alpha`）:**
+**OpenRouter API 端點（使用免費模型 `qwen/qwen-2.5-72b-instruct:free`）:**
 
 4. **POST /api/openrouter/translate**
    - 翻譯英文例句成繁體中文
@@ -198,7 +198,7 @@ npm run preview
 
 後端 Express Server 代理請求到 AI API：
 - **Anthropic Claude API**: 例句修正、字典查詢（使用 tools）
-- **OpenRouter API**: 拼字檢查、例句翻譯（使用免費模型 `openrouter/polaris-alpha`）
+- **OpenRouter API**: 拼字檢查、例句翻譯（使用免費模型 `qwen/qwen-2.5-72b-instruct:free`）
 - 使用環境變數管理 API Keys (`.env`)
 - 解決 CORS 跨域問題
 - 保護 API Keys 不暴露在前端
@@ -264,7 +264,7 @@ npm run preview
 1. **環境變數設定**: 首次使用請複製 `.env.example` 為 `.env`，並填入 Anthropic、OpenRouter 和 Unsplash API Keys
 2. **前後端同時運行**: 使用 `npm run dev` 會同時啟動前端 (5173) 和後端 (3001)
 3. **API Keys 安全**: 所有 API Keys 儲存在後端 `.env`，不暴露在前端程式碼
-4. **OpenRouter 免費模型**: 使用 `openrouter/polaris-alpha` 免費模型進行翻譯和拼字檢查
+4. **OpenRouter 免費模型**: 使用 `qwen/qwen-2.5-72b-instruct:free` 免費模型進行翻譯和拼字檢查
 5. **翻譯結果不儲存**: 例句翻譯結果僅在前端暫時顯示，不寫入資料庫
 6. **Unsplash API**:
    - 免費版每小時 50 次請求（使用每日模式一天僅請求一次）

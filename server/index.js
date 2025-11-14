@@ -261,7 +261,7 @@ app.post('/api/openrouter/translate', async (req, res) => {
         'X-Title': 'Vocab Manager'
       },
       body: JSON.stringify({
-        model: 'openrouter/polaris-alpha',
+        model: 'qwen/qwen-2.5-72b-instruct:free',
         messages: [{
           role: 'user',
           content: `請將以下英文翻譯成繁體中文（台灣用語）：
@@ -314,7 +314,7 @@ app.post('/api/openrouter/spell-check', async (req, res) => {
         'X-Title': 'Vocab Manager'
       },
       body: JSON.stringify({
-        model: 'openrouter/polaris-alpha',
+        model: 'qwen/qwen-2.5-72b-instruct:free',
         messages: [{
           role: 'user',
           content: `分析這個英文單字: "${word}"
