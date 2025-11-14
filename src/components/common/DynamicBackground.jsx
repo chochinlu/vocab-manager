@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { getBackgroundPhoto, getBackgroundSettings, preloadImage } from '../../services/background.service';
 
 /**
@@ -9,10 +9,15 @@ export const DynamicBackground = ({ children }) => {
   const [backgroundUrl, setBackgroundUrl] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(false);
+  const hasLoadedRef = useRef(false);
 
   useEffect(() => {
+    // 防止 React Strict Mode 重複載入
+    if (hasLoadedRef.current) return;
+
     const loadBackground = async () => {
       try {
+        hasLoadedRef.current = true;
         const settings = getBackgroundSettings();
 
         // 如果停用背景圖片，直接使用原本的漸層
