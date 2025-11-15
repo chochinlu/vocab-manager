@@ -4,7 +4,7 @@ import { VocabCard } from './VocabCard';
 /**
  * 單字列表組件
  */
-export const VocabList = ({ vocabs, totalCount, onEdit, onDelete }) => {
+export const VocabList = ({ vocabs, totalCount, onEdit, onDelete, onPractice }) => {
   if (vocabs.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
@@ -21,6 +21,7 @@ export const VocabList = ({ vocabs, totalCount, onEdit, onDelete }) => {
           vocab={vocab}
           onEdit={onEdit}
           onDelete={onDelete}
+          onPractice={onPractice}
         />
       ))}
     </div>

@@ -27,3 +27,13 @@ export const DATE_FILTER_OPTIONS = [
   { value: 'month', label: 'This Month' },
   { value: 'all', label: 'All' }
 ];
+
+/**
+ * Get Part of Speech label from value
+ * @param {string} value - POS value
+ * @returns {string} POS label
+ */
+export const getPOSLabel = (value) => {
+  const pos = POS_OPTIONS.find(p => p.value === value);
+  return pos ? pos.label : value;
+};

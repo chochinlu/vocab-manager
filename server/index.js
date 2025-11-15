@@ -370,6 +370,170 @@ app.post('/api/openrouter/spell-check', async (req, res) => {
 });
 
 /**
+ * AI 練習批改
+ * POST /api/ai/practice-feedback
+ */
+app.post('/api/ai/practice-feedback', async (req, res) => {
+  const { word, partOfSpeech, sentence, model = 'haiku' } = req.body;
+
+  if (!word || !sentence) {
+    return res.status(400).json({ error: '請提供單字和例句' });
+  }
+
+  // Model mapping
+  const modelMap = {
+    'sonnet': 'claude-sonnet-4-20250514',
+    'haiku': 'claude-3-5-haiku-20241022',
+    'qwen': 'qwen/qwen-2.5-72b-instruct:free'
+  };
+
+  const selectedModel = modelMap[model] || modelMap['haiku'];
+  const useOpenRouter = model === 'qwen';
+
+  try {
+    if (useOpenRouter) {
+      // Use OpenRouter for Qwen
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${OPENROUTER_API_KEY}`,
+          'HTTP-Referer': 'http://localhost:5173',
+          'X-Title': 'Vocab Manager'
+        },
+        body: JSON.stringify({
+          model: selectedModel,
+          messages: [{
+            role: 'user',
+            content: `你是專業的英文教學老師，請批改學生的英文例句練習。
+
+目標單字: ${word} (${partOfSpeech})
+學生寫的例句: "${sentence}"
+
+請提供詳細的批改回饋，包含：
+1. 評分 (0-100)
+2. 語法錯誤檢查
+3. 用法建議
+4. 改進版本
+5. 整體評語
+6. 熟練度評估
+
+回傳 JSON 格式（不要 markdown 標記）:
+{
+  "score": 85,
+  "isCorrect": true,
+  "errors": [
+    {
+      "type": "grammar" | "usage" | "word-choice" | "spelling",
+      "pattern": "錯誤類型簡述（如：missing article）",
+      "original": "原始錯誤文字",
+      "correction": "修正後文字",
+      "explanation": "錯誤說明（繁體中文）"
+    }
+  ],
+  "suggestions": [
+    "建議1（繁體中文）",
+    "建議2（繁體中文）"
+  ],
+  "improvedVersion": "改進後的完整例句",
+  "overallComment": "整體評語（繁體中文，鼓勵性質）",
+  "proficiencyAssessment": "beginner" | "intermediate" | "advanced" | "mastered"
+}
+
+重要：
+- 如果句子完全正確，errors 為空陣列，isCorrect 為 true
+- score 應該根據語法正確性、用法道地性、句子複雜度綜合評分
+- proficiencyAssessment 根據學生的表現評估熟練度
+- 所有中文說明使用繁體中文（台灣用語）
+- 只回傳 JSON，不要其他說明`
+          }]
+        })
+      });
+
+      const data = await response.json();
+
+      if (data.error) {
+        console.error('OpenRouter API 錯誤:', data.error);
+        return res.status(500).json({ error: data.error.message || '批改服務失敗' });
+      }
+
+      // Transform OpenRouter response to match Anthropic format
+      const content = data.choices?.[0]?.message?.content || '';
+      res.json({
+        content: [{
+          type: 'text',
+          text: content
+        }]
+      });
+    } else {
+      // Use Anthropic for Sonnet/Haiku
+      const response = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': ANTHROPIC_API_KEY,
+          'anthropic-version': '2023-06-01'
+        },
+        body: JSON.stringify({
+          model: selectedModel,
+          max_tokens: 2000,
+        messages: [{
+          role: 'user',
+          content: `你是專業的英文教學老師，請批改學生的英文例句練習。
+
+目標單字: ${word} (${partOfSpeech})
+學生寫的例句: "${sentence}"
+
+請提供詳細的批改回饋，包含：
+1. 評分 (0-100)
+2. 語法錯誤檢查
+3. 用法建議
+4. 改進版本
+5. 整體評語
+6. 熟練度評估
+
+回傳 JSON 格式（不要 markdown 標記）:
+{
+  "score": 85,
+  "isCorrect": true,
+  "errors": [
+    {
+      "type": "grammar" | "usage" | "word-choice" | "spelling",
+      "pattern": "錯誤類型簡述（如：missing article）",
+      "original": "原始錯誤文字",
+      "correction": "修正後文字",
+      "explanation": "錯誤說明（繁體中文）"
+    }
+  ],
+  "suggestions": [
+    "建議1（繁體中文）",
+    "建議2（繁體中文）"
+  ],
+  "improvedVersion": "改進後的完整例句",
+  "overallComment": "整體評語（繁體中文，鼓勵性質）",
+  "proficiencyAssessment": "beginner" | "intermediate" | "advanced" | "mastered"
+}
+
+重要：
+- 如果句子完全正確，errors 為空陣列，isCorrect 為 true
+- score 應該根據語法正確性、用法道地性、句子複雜度綜合評分
+- proficiencyAssessment 根據學生的表現評估熟練度
+- 所有中文說明使用繁體中文（台灣用語）
+- 只回傳 JSON，不要其他說明`
+        }]
+        })
+      });
+
+      const data = await response.json();
+      res.json(data);
+    }
+  } catch (error) {
+    console.error('AI 練習批改錯誤:', error);
+    res.status(500).json({ error: '批改服務失敗' });
+  }
+});
+
+/**
  * Unsplash 隨機背景圖片
  * GET /api/unsplash/random
  */

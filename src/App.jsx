@@ -17,6 +17,7 @@ import { Header } from './components/Layout/Header';
 import { FilterBar } from './components/Search/FilterBar';
 import { VocabForm } from './components/Form/VocabForm';
 import { VocabList } from './components/VocabList/VocabList';
+import { PracticeMode } from './components/Practice/PracticeMode';
 
 /**
  * 主應用程式組件
@@ -25,6 +26,8 @@ import { VocabList } from './components/VocabList/VocabList';
 const VocabManager = () => {
   // UI 狀態
   const [showAddForm, setShowAddForm] = useState(false);
+  const [showPractice, setShowPractice] = useState(false);
+  const [practiceVocab, setPracticeVocab] = useState(null);
 
   // Toast 通知系統
   const { showSuccess, showError } = useToastContext();
@@ -127,6 +130,28 @@ const VocabManager = () => {
     loadVocabToForm(vocab);
     setShowAddForm(true);
     window.scrollTo({ top: 0, behavior: 'smooth' });
+  };
+
+  // 處理練習單字
+  const handlePracticeVocab = (vocab) => {
+    setPracticeVocab(vocab);
+    setShowPractice(true);
+  };
+
+  // 關閉練習模式
+  const handleClosePractice = () => {
+    setShowPractice(false);
+    setPracticeVocab(null);
+  };
+
+  // 更新練習中的單字（更新統計資料）
+  const handleUpdatePracticeVocab = async (updatedVocab) => {
+    try {
+      await saveVocab(updatedVocab, updatedVocab);
+      setPracticeVocab(updatedVocab);
+    } catch (error) {
+      showError('Update practice stats failed: ' + error.message);
+    }
   };
 
   // 處理拼字檢查
@@ -284,12 +309,22 @@ const VocabManager = () => {
           totalCount={vocabs.length}
           onEdit={handleEditVocab}
           onDelete={handleDeleteVocab}
+          onPractice={handlePracticeVocab}
         />
         </div>
       </div>
 
       {/* 浮動動作按鈕 */}
       <FloatingActionButtons onAddVocab={handleAddVocabFromFloating} />
+
+      {/* 練習模式 */}
+      {showPractice && practiceVocab && (
+        <PracticeMode
+          vocab={practiceVocab}
+          onClose={handleClosePractice}
+          onUpdateVocab={handleUpdatePracticeVocab}
+        />
+      )}
     </DynamicBackground>
   );
 };

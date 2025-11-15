@@ -37,24 +37,33 @@ export const saveVocab = async (vocabData, editingVocab = null) => {
     partOfSpeech: vocabData.partOfSpeech,
     addedDate: editingVocab ? editingVocab.addedDate : new Date().toISOString(),
     definitions: {
-      chinese: vocabData.definitionChinese || '',
-      english: vocabData.definitionEnglish || ''
+      chinese: vocabData.definitionChinese || vocabData.definitions?.chinese || '',
+      english: vocabData.definitionEnglish || vocabData.definitions?.english || ''
     },
     examples: {
-      original: vocabData.examplesOriginal?.filter(e => e.trim()) || [],
-      myOwn: vocabData.myExample || '',
-      aiCorrected: vocabData.aiCorrected || '',
-      aiSuggestion: vocabData.aiSuggestion || ''
+      original: vocabData.examplesOriginal?.filter(e => e.trim()) || vocabData.examples?.original || [],
+      myOwn: vocabData.myExample || vocabData.examples?.myOwn || '',
+      aiCorrected: vocabData.aiCorrected || vocabData.examples?.aiCorrected || '',
+      aiSuggestion: vocabData.aiSuggestion || vocabData.examples?.aiSuggestion || ''
     },
     pronunciation: {
-      phonetic: vocabData.phonetic || '',
-      audioUrl: vocabData.audioUrl || '',
-      audioUrlUK: vocabData.audioUrlUK || '',
-      audioUrlUS: vocabData.audioUrlUS || ''
+      phonetic: vocabData.phonetic || vocabData.pronunciation?.phonetic || '',
+      audioUrl: vocabData.audioUrl || vocabData.pronunciation?.audioUrl || '',
+      audioUrlUK: vocabData.audioUrlUK || vocabData.pronunciation?.audioUrlUK || '',
+      audioUrlUS: vocabData.audioUrlUS || vocabData.pronunciation?.audioUrlUS || ''
     },
     context: vocabData.context || { source: '', scenario: '', url: '' },
     tags: vocabData.tags || [],
-    reviewHistory: editingVocab ? editingVocab.reviewHistory : []
+    reviewHistory: editingVocab ? editingVocab.reviewHistory : [],
+    // 保留練習統計資料
+    practiceStats: vocabData.practiceStats || editingVocab?.practiceStats || {
+      totalPractices: 0,
+      lastPracticeDate: null,
+      proficiencyLevel: 'beginner',
+      commonErrors: [],
+      averageScore: 0,
+      recentScores: []
+    }
   };
 
   await window.storage.set(vocab.id, JSON.stringify(vocab));
