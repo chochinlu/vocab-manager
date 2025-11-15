@@ -4,6 +4,7 @@ import { usePracticeSession } from '../../hooks/usePracticeSession';
 import { PracticeStats } from './PracticeStats';
 import { PracticeFeedback } from './PracticeFeedback';
 import { ErrorPatterns } from './ErrorPatterns';
+import { ModelSelector } from './ModelSelector';
 import { renderExample } from '../../utils/renderExample';
 import { getPOSLabel } from '../../utils/constants';
 import { LoadingSpinner } from '../common/LoadingSpinner';
@@ -44,7 +45,7 @@ export const PracticeMode = ({ vocab, onClose, onUpdateVocab }) => {
             </h2>
             <p className="text-sm text-gray-600">{getPOSLabel(vocab.partOfSpeech)}</p>
           </div>
-          <div className="w-24"></div> {/* Spacer for centering */}
+          <ModelSelector />
         </div>
       </div>
 
@@ -60,14 +61,22 @@ export const PracticeMode = ({ vocab, onClose, onUpdateVocab }) => {
             單字資訊
           </h3>
           <div className="space-y-2 text-sm">
-            <div>
-              <span className="font-medium text-gray-600">中文定義：</span>
-              <span className="text-gray-800 ml-2">{vocab.definitions?.chinese || '無'}</span>
-            </div>
+            {vocab.definitions?.chinese && (
+              <div>
+                <span className="font-medium text-gray-600">中文定義：</span>
+                <span className="text-gray-800 ml-2">{vocab.definitions.chinese}</span>
+              </div>
+            )}
             {vocab.definitions?.english && (
               <div>
                 <span className="font-medium text-gray-600">英文定義：</span>
                 <span className="text-gray-800 ml-2">{vocab.definitions.english}</span>
+              </div>
+            )}
+            {vocab.pronunciation?.phonetic && (
+              <div>
+                <span className="font-medium text-gray-600">音標：</span>
+                <span className="text-gray-800 ml-2">{vocab.pronunciation.phonetic}</span>
               </div>
             )}
 
@@ -94,7 +103,7 @@ export const PracticeMode = ({ vocab, onClose, onUpdateVocab }) => {
                   <ul className="mt-2 space-y-1 pl-4">
                     {vocab.examples.original.map((example, index) => (
                       <li key={index} className="text-gray-700 text-sm">
-                        <div dangerouslySetInnerHTML={{ __html: renderExample(example) }} />
+                        {renderExample(example)}
                       </li>
                     ))}
                   </ul>

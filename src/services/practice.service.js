@@ -2,6 +2,8 @@
  * Practice Service - Handle sentence practice and feedback
  */
 
+import { settings } from '../utils/storage';
+
 const API_BASE_URL = 'http://localhost:3001/api';
 
 /**
@@ -9,17 +11,21 @@ const API_BASE_URL = 'http://localhost:3001/api';
  * @param {string} word - Target word
  * @param {string} partOfSpeech - Part of speech
  * @param {string} sentence - Student-written sentence
+ * @param {string} model - AI model to use (optional, defaults to user setting)
  * @returns {Promise<Object>} Feedback object
  */
-export const getPracticeFeedback = async (word, partOfSpeech, sentence) => {
+export const getPracticeFeedback = async (word, partOfSpeech, sentence, model = null) => {
   if (!sentence.trim()) {
     throw new Error('請先輸入例句');
   }
 
+  // Get model from parameter or user settings
+  const selectedModel = model || await settings.getAIModel();
+
   const response = await fetch(`${API_BASE_URL}/ai/practice-feedback`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ word, partOfSpeech, sentence })
+    body: JSON.stringify({ word, partOfSpeech, sentence, model: selectedModel })
   });
 
   if (!response.ok) {
@@ -155,4 +161,43 @@ export const getProficiencyDisplay = (level) => {
   };
 
   return displays[level] || displays.beginner;
+};
+
+/**
+ * AI 模型選項
+ */
+export const AI_MODELS = [
+  {
+    value: 'haiku',
+    label: 'Claude Haiku',
+    description: '快速、經濟',
+    speed: '快',
+    cost: '低',
+    quality: '中'
+  },
+  {
+    value: 'sonnet',
+    label: 'Claude Sonnet 4',
+    description: '高品質批改',
+    speed: '中',
+    cost: '中',
+    quality: '高'
+  },
+  {
+    value: 'qwen',
+    label: 'Qwen 2.5 72B',
+    description: '免費模型',
+    speed: '快',
+    cost: '免費',
+    quality: '基本'
+  }
+];
+
+/**
+ * Get AI model display info
+ * @param {string} modelValue - Model value
+ * @returns {Object} Model info
+ */
+export const getModelInfo = (modelValue) => {
+  return AI_MODELS.find(m => m.value === modelValue) || AI_MODELS[0];
 };

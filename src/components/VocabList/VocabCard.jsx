@@ -181,26 +181,43 @@ export const VocabCard = ({ vocab, onEdit, onDelete, onPractice }) => {
 
         {/* Practice Stats (if available) */}
         {hasPracticeStats && (
-          <div className="pt-3 border-t border-gray-200">
-            <div className="flex items-center justify-between text-xs">
-              <div className="flex items-center gap-3 text-gray-600">
-                <span>已練習 {practiceStats.totalPractices} 次</span>
-                <span>•</span>
-                <span className={getProficiencyDisplay(practiceStats.proficiencyLevel).color}>
-                  {getProficiencyDisplay(practiceStats.proficiencyLevel).label}
-                </span>
+          <div className="pt-3 mt-3 border-t border-gray-200 bg-gradient-to-r from-blue-50/50 to-purple-50/50 -mx-6 -mb-6 px-6 py-3 rounded-b-lg">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-2xl">📊</span>
+                  <div className="text-xs">
+                    <div className="font-semibold text-gray-700">
+                      已練習 {practiceStats.totalPractices} 次
+                    </div>
+                    <div className="text-gray-500">
+                      {practiceStats.lastPracticeDate &&
+                        `上次：${new Date(practiceStats.lastPracticeDate).toLocaleDateString('zh-TW')}`
+                      }
+                    </div>
+                  </div>
+                </div>
+                <div className={`flex items-center gap-1 px-2 py-1 rounded ${getProficiencyDisplay(practiceStats.proficiencyLevel).bgColor}`}>
+                  <span className="text-lg">
+                    {'⭐'.repeat(getProficiencyDisplay(practiceStats.proficiencyLevel).stars)}
+                  </span>
+                  <span className={`text-xs font-medium ${getProficiencyDisplay(practiceStats.proficiencyLevel).color}`}>
+                    {getProficiencyDisplay(practiceStats.proficiencyLevel).label}
+                  </span>
+                </div>
                 {practiceStats.averageScore > 0 && (
-                  <>
-                    <span>•</span>
-                    <span>平均 {practiceStats.averageScore} 分</span>
-                  </>
+                  <div className="text-xs bg-white px-2 py-1 rounded border border-gray-200">
+                    <span className="text-gray-500">平均：</span>
+                    <span className="font-semibold text-gray-700">{practiceStats.averageScore} 分</span>
+                  </div>
                 )}
               </div>
               <button
                 onClick={() => onPractice(vocab)}
-                className="text-green-600 hover:text-green-700 font-medium"
+                className="flex items-center gap-1 bg-green-600 hover:bg-green-700 text-white px-3 py-2 rounded-lg font-medium text-sm transition-colors"
               >
-                繼續練習 →
+                <span>繼續練習</span>
+                <span>→</span>
               </button>
             </div>
           </div>

@@ -57,7 +57,32 @@ export const storage = {
   },
 };
 
+// 設定管理
+export const settings = {
+  // AI 模型設定
+  async getAIModel() {
+    try {
+      const result = await storage.get('settings:ai-model');
+      return result?.value || 'haiku'; // 預設使用 haiku
+    } catch (error) {
+      console.error('Get AI model error:', error);
+      return 'haiku';
+    }
+  },
+
+  async setAIModel(model) {
+    try {
+      await storage.set('settings:ai-model', model);
+      return { success: true };
+    } catch (error) {
+      console.error('Set AI model error:', error);
+      throw error;
+    }
+  }
+};
+
 // 掛載到 window 上 (如果需要)
 if (typeof window !== "undefined") {
   window.storage = storage;
+  window.settings = settings;
 }
