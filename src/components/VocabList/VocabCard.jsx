@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { Edit2, Trash2, Tag, Calendar, Languages, Loader2 } from 'lucide-react';
+import { Edit2, Trash2, Tag, Calendar, Languages, Loader2, GraduationCap } from 'lucide-react';
 import { POS_OPTIONS } from '../../utils/constants';
 import { PronunciationGroup, PronunciationButton } from '../common/PronunciationButton';
 import { ExampleSection } from './ExampleSection';
 import { translateToTraditionalChinese } from '../../services/openrouter.service';
+import { getProficiencyDisplay } from '../../services/practice.service';
 
 /**
  * English Definition Item Component (with translation)
@@ -82,8 +83,10 @@ const DefinitionItem = ({ definition }) => {
 /**
  * Vocab Card Component
  */
-export const VocabCard = ({ vocab, onEdit, onDelete }) => {
+export const VocabCard = ({ vocab, onEdit, onDelete, onPractice }) => {
   const posLabel = POS_OPTIONS.find(p => p.value === vocab.partOfSpeech)?.label || vocab.partOfSpeech;
+  const practiceStats = vocab.practiceStats;
+  const hasPracticeStats = practiceStats && practiceStats.totalPractices > 0;
 
   return (
     <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl border border-white/20 p-6 hover:shadow-2xl transition">
@@ -109,6 +112,13 @@ export const VocabCard = ({ vocab, onEdit, onDelete }) => {
 
         {/* Action buttons */}
         <div className="flex gap-2">
+          <button
+            onClick={() => onPractice(vocab)}
+            className="text-green-600 hover:text-green-800 p-2 rounded hover:bg-green-50"
+            title="Practice"
+          >
+            <GraduationCap className="w-5 h-5" />
+          </button>
           <button
             onClick={() => onEdit(vocab)}
             className="text-indigo-600 hover:text-indigo-800 p-2 rounded hover:bg-indigo-50"
@@ -168,6 +178,33 @@ export const VocabCard = ({ vocab, onEdit, onDelete }) => {
           <Calendar className="w-3 h-3" />
           {new Date(vocab.addedDate).toLocaleDateString('zh-TW')}
         </div>
+
+        {/* Practice Stats (if available) */}
+        {hasPracticeStats && (
+          <div className="pt-3 border-t border-gray-200">
+            <div className="flex items-center justify-between text-xs">
+              <div className="flex items-center gap-3 text-gray-600">
+                <span>已練習 {practiceStats.totalPractices} 次</span>
+                <span>•</span>
+                <span className={getProficiencyDisplay(practiceStats.proficiencyLevel).color}>
+                  {getProficiencyDisplay(practiceStats.proficiencyLevel).label}
+                </span>
+                {practiceStats.averageScore > 0 && (
+                  <>
+                    <span>•</span>
+                    <span>平均 {practiceStats.averageScore} 分</span>
+                  </>
+                )}
+              </div>
+              <button
+                onClick={() => onPractice(vocab)}
+                className="text-green-600 hover:text-green-700 font-medium"
+              >
+                繼續練習 →
+              </button>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
