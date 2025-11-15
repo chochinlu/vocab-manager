@@ -1,14 +1,14 @@
 /**
- * AI 服務 - 透過本地 Express API 呼叫 Claude
+ * AI Service - Call Claude through local Express API
  */
 
 const API_BASE_URL = 'http://localhost:3001/api';
 
 /**
- * 修正中式英文例句
- * @param {string} word - 單字
- * @param {string} partOfSpeech - 詞性
- * @param {string} example - 學生寫的例句
+ * Correct Chinglish example sentence
+ * @param {string} word - Word
+ * @param {string} partOfSpeech - Part of speech
+ * @param {string} example - Student-written example
  * @returns {Promise<Object>} { corrected, containsTarget, suggestion }
  */
 export const correctExample = async (word, partOfSpeech, example) => {
@@ -23,7 +23,7 @@ export const correctExample = async (word, partOfSpeech, example) => {
   });
 
   if (!response.ok) {
-    throw new Error('API 請求失敗');
+    throw new Error('API request failed');
   }
 
   const data = await response.json();
@@ -41,11 +41,11 @@ export const correctExample = async (word, partOfSpeech, example) => {
 
     return {
       corrected: result.corrected || textContent,
-      containsTarget: result.containsTarget !== false, // 預設為 true
+      containsTarget: result.containsTarget !== false, // Default to true
       suggestion: result.suggestion || null
     };
   } catch (parseError) {
-    // 如果無法解析，回傳舊格式（向後相容）
+    // If unable to parse, return legacy format (backward compatible)
     console.warn('Failed to parse AI response as JSON, using legacy format:', parseError);
     return {
       corrected: textContent,
@@ -56,13 +56,13 @@ export const correctExample = async (word, partOfSpeech, example) => {
 };
 
 /**
- * 檢查拼字並提供建議
- * @param {string} word - 要檢查的單字
+ * Check spelling and provide suggestions
+ * @param {string} word - Word to check
  * @returns {Promise<Object>} { isCorrect, message, suggestions }
  */
 export const checkSpelling = async (word) => {
   if (!word.trim()) {
-    throw new Error('請輸入單字');
+    throw new Error('Please enter a word');
   }
 
   const response = await fetch(`${API_BASE_URL}/ai/spell-check`, {
@@ -72,7 +72,7 @@ export const checkSpelling = async (word) => {
   });
 
   if (!response.ok) {
-    throw new Error('API 請求失敗');
+    throw new Error('API request failed');
   }
 
   const data = await response.json();
@@ -94,13 +94,13 @@ export const checkSpelling = async (word) => {
     };
   } catch (parseError) {
     console.error('Parse error:', parseError);
-    throw new Error('拼字檢查失敗,請稍後再試');
+    throw new Error('Spell check failed, please try again later');
   }
 };
 
 /**
- * 提取 JSON（輔助函數）
- * @param {string} text - 包含 JSON 的文字
+ * Extract JSON (helper function)
+ * @param {string} text - Text containing JSON
  * @returns {Object|null}
  */
 const extractJSON = (text) => {
@@ -120,7 +120,7 @@ const extractJSON = (text) => {
     return null;
   }
 
-  throw new Error('無法提取 JSON');
+  throw new Error('Unable to extract JSON');
 };
 
 export { extractJSON };

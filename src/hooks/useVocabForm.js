@@ -18,8 +18,8 @@ const initialFormData = {
 };
 
 /**
- * 單字表單管理 Hook
- * 處理表單資料、驗證、重設
+ * Vocabulary Form Management Hook
+ * Handles form data, validation, reset
  */
 export const useVocabForm = () => {
   const [formData, setFormData] = useState(initialFormData);
@@ -27,12 +27,12 @@ export const useVocabForm = () => {
   const [newTag, setNewTag] = useState('');
   const [warningMessage, setWarningMessage] = useState(null);
 
-  // 更新表單欄位
+  // Update form field
   const updateField = (field, value) => {
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  // 更新巢狀欄位（如 context.source）
+  // Update nested field (e.g. context.source)
   const updateNestedField = (parent, field, value) => {
     setFormData(prev => ({
       ...prev,
@@ -43,7 +43,7 @@ export const useVocabForm = () => {
     }));
   };
 
-  // 更新例句陣列
+  // Update example array
   const updateExample = (index, value) => {
     setFormData(prev => {
       const newExamples = [...prev.examplesOriginal];
@@ -52,7 +52,7 @@ export const useVocabForm = () => {
     });
   };
 
-  // 新增例句欄位
+  // Add example field
   const addExampleField = () => {
     setFormData(prev => ({
       ...prev,
@@ -60,7 +60,7 @@ export const useVocabForm = () => {
     }));
   };
 
-  // 移除例句欄位
+  // Remove example field
   const removeExampleField = (index) => {
     setFormData(prev => ({
       ...prev,
@@ -68,7 +68,7 @@ export const useVocabForm = () => {
     }));
   };
 
-  // 新增標籤
+  // Add tag
   const addTag = () => {
     if (newTag.trim() && !formData.tags.includes(newTag.trim())) {
       setFormData(prev => ({
@@ -79,7 +79,7 @@ export const useVocabForm = () => {
     }
   };
 
-  // 移除標籤
+  // Remove tag
   const removeTag = (tag) => {
     setFormData(prev => ({
       ...prev,
@@ -87,7 +87,7 @@ export const useVocabForm = () => {
     }));
   };
 
-  // 載入單字資料到表單（編輯模式）
+  // Load word data into form (edit mode)
   const loadVocabToForm = (vocab) => {
     setEditingVocab(vocab);
     setFormData({
@@ -108,7 +108,7 @@ export const useVocabForm = () => {
     });
   };
 
-  // 重設表單
+  // Reset form
   const resetForm = () => {
     setFormData(initialFormData);
     setEditingVocab(null);
@@ -116,15 +116,15 @@ export const useVocabForm = () => {
     setWarningMessage(null);
   };
 
-  // 清除警告訊息
+  // Clear warning message
   const clearWarning = () => {
     setWarningMessage(null);
   };
 
-  // 驗證表單
+  // Validate form
   const validateForm = () => {
     if (!formData.word.trim()) {
-      throw new Error('請輸入單字');
+      throw new Error('Please enter a word');
     }
     return true;
   };
