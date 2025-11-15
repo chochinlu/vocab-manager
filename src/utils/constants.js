@@ -2,28 +2,28 @@
  * 應用程式常數定義
  */
 
-// 詞性選項
+// Part of Speech Options
 export const POS_OPTIONS = [
-  { value: 'verb', label: '動詞 (v.)' },
-  { value: 'noun', label: '名詞 (n.)' },
-  { value: 'adjective', label: '形容詞 (adj.)' },
-  { value: 'adverb', label: '副詞 (adv.)' },
-  { value: 'phrasal-verb', label: '片語動詞 (phr. v.)' },
-  { value: 'phrase', label: '片語/慣用語' },
-  { value: 'other', label: '其他' }
+  { value: 'verb', label: 'Verb (v.)' },
+  { value: 'noun', label: 'Noun (n.)' },
+  { value: 'adjective', label: 'Adjective (adj.)' },
+  { value: 'adverb', label: 'Adverb (adv.)' },
+  { value: 'phrasal-verb', label: 'Phrasal Verb (phr. v.)' },
+  { value: 'phrase', label: 'Phrase/Idiom' },
+  { value: 'other', label: 'Other' }
 ];
 
-// 排序選項
+// Sort Options
 export const SORT_OPTIONS = [
-  { value: 'newest', label: '最新優先' },
-  { value: 'oldest', label: '最舊優先' },
-  { value: 'alphabetical', label: '字母順序' }
+  { value: 'newest', label: 'Newest First' },
+  { value: 'oldest', label: 'Oldest First' },
+  { value: 'alphabetical', label: 'Alphabetical' }
 ];
 
-// 日期篩選選項
+// Date Filter Options
 export const DATE_FILTER_OPTIONS = [
-  { value: 'today', label: '今天' },
-  { value: 'week', label: '本週' },
-  { value: 'month', label: '本月' },
-  { value: 'all', label: '全部' }
+  { value: 'today', label: 'Today' },
+  { value: 'week', label: 'This Week' },
+  { value: 'month', label: 'This Month' },
+  { value: 'all', label: 'All' }
 ];

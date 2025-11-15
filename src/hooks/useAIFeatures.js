@@ -21,7 +21,7 @@ export const useAIFeatures = () => {
    */
   const checkSpelling = async (word) => {
     if (!word.trim()) {
-      showError('請先輸入單字');
+      showError('Please enter a word first');
       return;
     }
 
@@ -37,14 +37,14 @@ export const useAIFeatures = () => {
       }
 
       if (result.isCorrect && result.suggestions.length === 0) {
-        showSuccess('拼字正確!');
+        showSuccess('Spelling is correct!');
       } else if (!result.isCorrect && result.message) {
         showInfo(result.message);
       }
 
       return result;
     } catch (error) {
-      showError('拼字檢查失敗: ' + error.message);
+      showError('Spell check failed: ' + error.message);
       throw error;
     } finally {
       setIsCheckingSpelling(false);
@@ -57,7 +57,7 @@ export const useAIFeatures = () => {
    */
   const correctExample = async (word, partOfSpeech, example) => {
     if (!example.trim()) {
-      showError('請先輸入你的例句');
+      showError('Please enter your example sentence first');
       return null;
     }
 

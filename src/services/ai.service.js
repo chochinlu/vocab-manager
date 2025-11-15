@@ -13,7 +13,7 @@ const API_BASE_URL = 'http://localhost:3001/api';
  */
 export const correctExample = async (word, partOfSpeech, example) => {
   if (!example.trim()) {
-    throw new Error('請先輸入你的例句');
+    throw new Error('Please enter your example sentence first');
   }
 
   const response = await fetch(`${API_BASE_URL}/ai/correct-example`, {
@@ -46,7 +46,7 @@ export const correctExample = async (word, partOfSpeech, example) => {
     };
   } catch (parseError) {
     // 如果無法解析，回傳舊格式（向後相容）
-    console.warn('無法解析 AI 回應為 JSON，使用舊格式:', parseError);
+    console.warn('Failed to parse AI response as JSON, using legacy format:', parseError);
     return {
       corrected: textContent,
       containsTarget: true,

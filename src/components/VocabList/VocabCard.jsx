@@ -6,7 +6,7 @@ import { ExampleSection } from './ExampleSection';
 import { translateToTraditionalChinese } from '../../services/openrouter.service';
 
 /**
- * 英文定義項目組件（帶翻譯功能）
+ * English Definition Item Component (with translation)
  */
 const DefinitionItem = ({ definition }) => {
   const [translation, setTranslation] = useState(null);
@@ -27,7 +27,7 @@ const DefinitionItem = ({ definition }) => {
       setTranslation(result);
     } catch (err) {
       setError(err.message);
-      console.error('翻譯錯誤:', err);
+      console.error('Translation error:', err);
     } finally {
       setIsTranslating(false);
     }
@@ -50,14 +50,14 @@ const DefinitionItem = ({ definition }) => {
                 ? 'bg-green-100 text-green-700 hover:bg-green-200'
                 : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
             } disabled:opacity-50 disabled:cursor-not-allowed`}
-            title={translation ? '隱藏翻譯' : '翻譯成中文'}
+            title={translation ? 'Hide translation' : 'Translate to Chinese'}
           >
             {isTranslating ? (
               <Loader2 className="w-3 h-3 animate-spin" />
             ) : (
               <Languages className="w-3 h-3" />
             )}
-            <span>{translation ? '隱藏' : '翻譯'}</span>
+            <span>{translation ? 'Hide' : 'Translate'}</span>
           </button>
         </div>
       </div>
@@ -80,7 +80,7 @@ const DefinitionItem = ({ definition }) => {
 };
 
 /**
- * 單字卡片組件
+ * Vocab Card Component
  */
 export const VocabCard = ({ vocab, onEdit, onDelete }) => {
   const posLabel = POS_OPTIONS.find(p => p.value === vocab.partOfSpeech)?.label || vocab.partOfSpeech;
@@ -107,19 +107,19 @@ export const VocabCard = ({ vocab, onEdit, onDelete }) => {
           )}
         </div>
 
-        {/* 動作按鈕 */}
+        {/* Action buttons */}
         <div className="flex gap-2">
           <button
             onClick={() => onEdit(vocab)}
             className="text-indigo-600 hover:text-indigo-800 p-2 rounded hover:bg-indigo-50"
-            title="編輯"
+            title="Edit"
           >
             <Edit2 className="w-5 h-5" />
           </button>
           <button
             onClick={() => onDelete(vocab.id)}
             className="text-red-500 hover:text-red-700 p-2 rounded hover:bg-red-50"
-            title="刪除"
+            title="Delete"
           >
             <Trash2 className="w-5 h-5" />
           </button>

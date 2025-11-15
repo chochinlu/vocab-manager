@@ -104,7 +104,7 @@ const VocabManager = () => {
       await saveVocab(formData, editingVocab);
       resetForm();
       setShowAddForm(false);
-      showSuccess(editingVocab ? '單字已更新!' : '單字已新增!');
+      showSuccess(editingVocab ? 'Word updated!' : 'Word added!');
     } catch (error) {
       showError(error.message);
     }
@@ -112,13 +112,13 @@ const VocabManager = () => {
 
   // 處理刪除單字
   const handleDeleteVocab = async (id) => {
-    if (!confirm('確定要刪除這個單字嗎?')) return;
+    if (!confirm('Are you sure you want to delete this word?')) return;
 
     try {
       await deleteVocab(id);
-      showSuccess('單字已刪除!');
+      showSuccess('Word deleted!');
     } catch (error) {
-      showError('刪除失敗: ' + error.message);
+      showError('Delete failed: ' + error.message);
     }
   };
 
@@ -242,7 +242,7 @@ const VocabManager = () => {
           />
 
           <div className="text-sm text-gray-600 mt-4">
-            顯示 {filteredVocabs.length} 個單字
+            Showing {filteredVocabs.length} word{filteredVocabs.length !== 1 ? 's' : ''}
           </div>
         </div>
 

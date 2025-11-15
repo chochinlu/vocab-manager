@@ -3,12 +3,12 @@ import { RefreshCw, Book } from 'lucide-react';
 import { openCambridgeDictionary } from '../../services/dictionary.service';
 
 /**
- * AI 工具按鈕組
+ * AI Tools Button Group
  */
 export const AITools = ({ word, onFetchFreeDictionary, onFetchCambridge, isFetchingFree, isFetchingCambridge }) => {
   return (
     <div className="bg-gradient-to-r from-blue-50 to-purple-50 border border-blue-200 rounded-lg p-4">
-      <p className="text-sm font-medium text-gray-800 mb-3">🤖 AI 字典助手</p>
+      <p className="text-sm font-medium text-gray-800 mb-3">🤖 AI Dictionary Assistant</p>
       <div className="flex flex-wrap gap-2">
         <button
           onClick={onFetchFreeDictionary}
@@ -19,7 +19,7 @@ export const AITools = ({ word, onFetchFreeDictionary, onFetchCambridge, isFetch
           {isFetchingFree ? (
             <>
               <RefreshCw className="w-4 h-4 animate-spin" />
-              抓取中...
+              Fetching...
             </>
           ) : (
             <>
@@ -37,12 +37,12 @@ export const AITools = ({ word, onFetchFreeDictionary, onFetchCambridge, isFetch
           {isFetchingCambridge ? (
             <>
               <RefreshCw className="w-4 h-4 animate-spin" />
-              抓取中...
+              Fetching...
             </>
           ) : (
             <>
               <Book className="w-4 h-4" />
-              劍橋字典
+              Cambridge Dictionary
             </>
           )}
         </button>
@@ -53,10 +53,10 @@ export const AITools = ({ word, onFetchFreeDictionary, onFetchCambridge, isFetch
           className="flex items-center gap-2 bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition disabled:bg-gray-400 text-sm"
         >
           <Book className="w-4 h-4" />
-          開啟網頁
+          Open Website
         </button>
       </div>
-      <p className="text-xs text-gray-600 mt-2">💡 自動填入音標、定義和例句</p>
+      <p className="text-xs text-gray-600 mt-2">💡 Auto-fill phonetic, definitions and examples</p>
     </div>
   );
 };

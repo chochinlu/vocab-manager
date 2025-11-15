@@ -50,7 +50,7 @@ const Toast = ({ id, type = 'info', message, duration = 3000, onClose }) => {
       <button
         onClick={() => onClose(id)}
         className="flex-shrink-0 hover:opacity-70 transition-opacity"
-        aria-label="關閉通知"
+        aria-label="Close notification"
       >
         <X className="w-4 h-4" />
       </button>

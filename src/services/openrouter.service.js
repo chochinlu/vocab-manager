@@ -12,7 +12,7 @@ const API_BASE_URL = 'http://localhost:3001/api';
  */
 export const translateToTraditionalChinese = async (text) => {
   if (!text.trim()) {
-    throw new Error('請提供要翻譯的文字');
+    throw new Error('Please provide text to translate');
   }
 
   const response = await fetch(`${API_BASE_URL}/openrouter/translate`, {
@@ -23,7 +23,7 @@ export const translateToTraditionalChinese = async (text) => {
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.error || '翻譯請求失敗');
+    throw new Error(errorData.error || 'Translation request failed');
   }
 
   const data = await response.json();
@@ -37,7 +37,7 @@ export const translateToTraditionalChinese = async (text) => {
  */
 export const checkSpelling = async (word) => {
   if (!word.trim()) {
-    throw new Error('請輸入單字');
+    throw new Error('Please enter a word');
   }
 
   const response = await fetch(`${API_BASE_URL}/openrouter/spell-check`, {
@@ -48,7 +48,7 @@ export const checkSpelling = async (word) => {
 
   if (!response.ok) {
     const errorData = await response.json();
-    throw new Error(errorData.error || '拼字檢查請求失敗');
+    throw new Error(errorData.error || 'Spell check request failed');
   }
 
   const data = await response.json();

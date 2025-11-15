@@ -2,8 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { getBackgroundPhoto, getBackgroundSettings, preloadImage } from '../../services/background.service';
 
 /**
- * 動態背景圖片組件
- * 使用 Unsplash API 提供隨機高品質背景圖片
+ * Dynamic Background Image Component
+ * Uses Unsplash API to provide random high-quality background images
  */
 export const DynamicBackground = ({ children }) => {
   const [backgroundUrl, setBackgroundUrl] = useState(null);
@@ -12,7 +12,7 @@ export const DynamicBackground = ({ children }) => {
   const hasLoadedRef = useRef(false);
 
   useEffect(() => {
-    // 防止 React Strict Mode 重複載入
+    // Prevent React Strict Mode from double loading
     if (hasLoadedRef.current) return;
 
     const loadBackground = async () => {
@@ -20,13 +20,13 @@ export const DynamicBackground = ({ children }) => {
         hasLoadedRef.current = true;
         const settings = getBackgroundSettings();
 
-        // 如果停用背景圖片，直接使用原本的漸層
+        // If background is disabled, use the original gradient
         if (!settings.enabled) {
           setIsLoading(false);
           return;
         }
 
-        // 獲取背景圖片資料
+        // Get background photo data
         const photo = await getBackgroundPhoto();
 
         if (!photo) {
@@ -34,13 +34,13 @@ export const DynamicBackground = ({ children }) => {
           return;
         }
 
-        // 預載入圖片
+        // Preload image
         await preloadImage(photo.url);
 
         setBackgroundUrl(photo.url);
         setIsLoading(false);
       } catch (err) {
-        console.error('載入背景圖片失敗:', err);
+        console.error('Failed to load background image:', err);
         setError(true);
         setIsLoading(false);
       }
@@ -51,12 +51,12 @@ export const DynamicBackground = ({ children }) => {
 
   return (
     <div className="relative min-h-screen">
-      {/* 背景層 */}
+      {/* Background layer */}
       <div className="fixed inset-0 -z-10">
-        {/* 原本的漸層背景（作為 fallback） */}
+        {/* Original gradient background (as fallback) */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-100" />
 
-        {/* 動態背景圖片 */}
+        {/* Dynamic background image */}
         {backgroundUrl && !error && (
           <>
             <div
@@ -65,13 +65,13 @@ export const DynamicBackground = ({ children }) => {
               }`}
               style={{ backgroundImage: `url(${backgroundUrl})` }}
             />
-            {/* 輕微遮罩層（確保內容可讀性） */}
+            {/* Light overlay layer (ensures content readability) */}
             <div className="absolute inset-0 bg-white/30" />
           </>
         )}
       </div>
 
-      {/* 內容層 */}
+      {/* Content layer */}
       <div className="relative z-0">
         {children}
       </div>

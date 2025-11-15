@@ -5,16 +5,16 @@
 const API_BASE_URL = 'http://localhost:3001/api';
 
 /**
- * 詞性選項對照表
+ * Part of Speech Options
  */
 const POS_OPTIONS = [
-  { value: 'verb', label: '動詞 (v.)' },
-  { value: 'noun', label: '名詞 (n.)' },
-  { value: 'adjective', label: '形容詞 (adj.)' },
-  { value: 'adverb', label: '副詞 (adv.)' },
-  { value: 'phrasal-verb', label: '片語動詞 (phr. v.)' },
-  { value: 'phrase', label: '片語/慣用語' },
-  { value: 'other', label: '其他' }
+  { value: 'verb', label: 'Verb (v.)' },
+  { value: 'noun', label: 'Noun (n.)' },
+  { value: 'adjective', label: 'Adjective (adj.)' },
+  { value: 'adverb', label: 'Adverb (adv.)' },
+  { value: 'phrasal-verb', label: 'Phrasal Verb (phr. v.)' },
+  { value: 'phrase', label: 'Phrase/Idiom' },
+  { value: 'other', label: 'Other' }
 ];
 
 /**
@@ -25,7 +25,7 @@ const POS_OPTIONS = [
  */
 export const fetchFreeDictionaryData = async (word, partOfSpeech) => {
   if (!word.trim()) {
-    throw new Error('請先輸入單字或片語');
+    throw new Error('Please enter a word or phrase');
   }
 
   const cleanWord = word.trim().toLowerCase();
@@ -35,7 +35,7 @@ export const fetchFreeDictionaryData = async (word, partOfSpeech) => {
     throw new Error('FREE_DICT_PHRASE_NOT_SUPPORTED');
   }
 
-  // 步驟1: 呼叫本地 API
+  // Step 1: Call local API
   const response = await fetch(`${API_BASE_URL}/dictionary/free`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -43,7 +43,7 @@ export const fetchFreeDictionaryData = async (word, partOfSpeech) => {
   });
 
   if (!response.ok) {
-    throw new Error('API 請求失敗');
+    throw new Error('API request failed');
   }
 
   const data = await response.json();
@@ -55,7 +55,7 @@ export const fetchFreeDictionaryData = async (word, partOfSpeech) => {
 
   console.log('Free Dictionary raw data:', rawText);
 
-  // 步驟2: 用 AI 整理成純 JSON
+  // Step 2: Use AI to organize into pure JSON
   const extractResponse = await fetch(`${API_BASE_URL}/dictionary/free`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -94,7 +94,7 @@ export const fetchFreeDictionaryData = async (word, partOfSpeech) => {
     throw new Error('NOT_FOUND');
   }
 
-  throw new Error('無法提取資料');
+  throw new Error('Failed to extract data');
 };
 
 /**
@@ -105,7 +105,7 @@ export const fetchFreeDictionaryData = async (word, partOfSpeech) => {
  */
 export const fetchCambridgeData = async (word, partOfSpeech) => {
   if (!word.trim()) {
-    throw new Error('請先輸入單字');
+    throw new Error('Please enter a word');
   }
 
   const cleanWord = word.trim().toLowerCase();
@@ -118,7 +118,7 @@ export const fetchCambridgeData = async (word, partOfSpeech) => {
   });
 
   if (!response.ok) {
-    throw new Error('API 請求失敗');
+    throw new Error('API request failed');
   }
 
   const data = await response.json();
@@ -150,7 +150,7 @@ export const fetchCambridgeData = async (word, partOfSpeech) => {
  */
 export const openCambridgeDictionary = (word) => {
   if (!word.trim()) {
-    throw new Error('請先輸入單字');
+    throw new Error('Please enter a word');
   }
   const cleanWord = word.trim().toLowerCase().replace(/\s+/g, '-');
   const url = `https://dictionary.cambridge.org/dictionary/english/${cleanWord}`;

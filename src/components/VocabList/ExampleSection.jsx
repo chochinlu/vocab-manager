@@ -14,7 +14,7 @@ const ExampleItem = ({ example, isSentence = true }) => {
 
   const handleTranslate = async () => {
     if (translation) {
-      // 如果已經有翻譯，點擊按鈕會隱藏翻譯
+      // If there's already a translation, clicking will hide it
       setTranslation(null);
       return;
     }
@@ -28,7 +28,7 @@ const ExampleItem = ({ example, isSentence = true }) => {
       setTranslation(result);
     } catch (err) {
       setError(err.message);
-      console.error('翻譯錯誤:', err);
+      console.error('Translation error:', err);
     } finally {
       setIsTranslating(false);
     }
@@ -49,14 +49,14 @@ const ExampleItem = ({ example, isSentence = true }) => {
               ? 'bg-green-100 text-green-700 hover:bg-green-200'
               : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
           } disabled:opacity-50 disabled:cursor-not-allowed`}
-          title={translation ? '隱藏翻譯' : '翻譯成中文'}
+          title={translation ? 'Hide translation' : 'Translate to Chinese'}
         >
           {isTranslating ? (
             <Loader2 className="w-3 h-3 animate-spin" />
           ) : (
             <Languages className="w-3 h-3" />
           )}
-          <span>{translation ? '隱藏' : '翻譯'}</span>
+          <span>{translation ? 'Hide' : 'Translate'}</span>
         </button>
       </div>
 
@@ -88,7 +88,7 @@ export const ExampleSection = ({ examples }) => {
       {/* 原始例句 */}
       {examples.original && examples.original.length > 0 && (
         <div>
-          <p className="font-medium text-gray-700 mb-2">原始例句:</p>
+          <p className="font-medium text-gray-700 mb-2">Original Examples:</p>
           <ul className="space-y-3">
             {examples.original.map((ex, i) => (
               <li key={i}>
@@ -102,13 +102,13 @@ export const ExampleSection = ({ examples }) => {
       {/* 我的例句 */}
       {examples.myOwn && (
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-          <p className="font-medium text-blue-800 text-sm mb-2">我的例句:</p>
+          <p className="font-medium text-blue-800 text-sm mb-2">My Example:</p>
           <MyExampleItem example={examples.myOwn} />
 
           {/* AI 修正 */}
           {examples.aiCorrected && (
             <div className="mt-3 pt-3 border-t border-blue-200">
-              <p className="font-medium text-green-800 text-sm mb-2">AI 修正:</p>
+              <p className="font-medium text-green-800 text-sm mb-2">AI Correction:</p>
               <AICorrectedExampleItem example={examples.aiCorrected} />
             </div>
           )}
@@ -116,7 +116,7 @@ export const ExampleSection = ({ examples }) => {
           {/* AI 建議 */}
           {examples.aiSuggestion && (
             <div className="mt-3 pt-3 border-t border-amber-200">
-              <p className="font-medium text-amber-800 text-sm mb-2">💡 AI 建議（使用目標單字）:</p>
+              <p className="font-medium text-amber-800 text-sm mb-2">💡 AI Suggestion (with target word):</p>
               <AISuggestionItem example={examples.aiSuggestion} />
             </div>
           )}
@@ -148,7 +148,7 @@ const AISuggestionItem = ({ example }) => {
       setTranslation(result);
     } catch (err) {
       setError(err.message);
-      console.error('翻譯錯誤:', err);
+      console.error('Translation error:', err);
     } finally {
       setIsTranslating(false);
     }
@@ -169,14 +169,14 @@ const AISuggestionItem = ({ example }) => {
               ? 'bg-amber-200 text-amber-800 hover:bg-amber-300'
               : 'bg-white text-amber-700 hover:bg-amber-100'
           } disabled:opacity-50 disabled:cursor-not-allowed`}
-          title={translation ? '隱藏翻譯' : '翻譯成中文'}
+          title={translation ? 'Hide translation' : 'Translate to Chinese'}
         >
           {isTranslating ? (
             <Loader2 className="w-3 h-3 animate-spin" />
           ) : (
             <Languages className="w-3 h-3" />
           )}
-          <span>{translation ? '隱藏' : '翻譯'}</span>
+          <span>{translation ? 'Hide' : 'Translate'}</span>
         </button>
       </div>
 
@@ -217,7 +217,7 @@ const MyExampleItem = ({ example }) => {
       setTranslation(result);
     } catch (err) {
       setError(err.message);
-      console.error('翻譯錯誤:', err);
+      console.error('Translation error:', err);
     } finally {
       setIsTranslating(false);
     }
@@ -238,14 +238,14 @@ const MyExampleItem = ({ example }) => {
               ? 'bg-blue-200 text-blue-800 hover:bg-blue-300'
               : 'bg-white text-blue-700 hover:bg-blue-100'
           } disabled:opacity-50 disabled:cursor-not-allowed`}
-          title={translation ? '隱藏翻譯' : '翻譯成中文'}
+          title={translation ? 'Hide translation' : 'Translate to Chinese'}
         >
           {isTranslating ? (
             <Loader2 className="w-3 h-3 animate-spin" />
           ) : (
             <Languages className="w-3 h-3" />
           )}
-          <span>{translation ? '隱藏' : '翻譯'}</span>
+          <span>{translation ? 'Hide' : 'Translate'}</span>
         </button>
       </div>
 
@@ -286,7 +286,7 @@ const AICorrectedExampleItem = ({ example }) => {
       setTranslation(result);
     } catch (err) {
       setError(err.message);
-      console.error('翻譯錯誤:', err);
+      console.error('Translation error:', err);
     } finally {
       setIsTranslating(false);
     }
@@ -307,14 +307,14 @@ const AICorrectedExampleItem = ({ example }) => {
               ? 'bg-green-200 text-green-800 hover:bg-green-300'
               : 'bg-white text-green-700 hover:bg-green-100'
           } disabled:opacity-50 disabled:cursor-not-allowed`}
-          title={translation ? '隱藏翻譯' : '翻譯成中文'}
+          title={translation ? 'Hide translation' : 'Translate to Chinese'}
         >
           {isTranslating ? (
             <Loader2 className="w-3 h-3 animate-spin" />
           ) : (
             <Languages className="w-3 h-3" />
           )}
-          <span>{translation ? '隱藏' : '翻譯'}</span>
+          <span>{translation ? 'Hide' : 'Translate'}</span>
         </button>
       </div>
 

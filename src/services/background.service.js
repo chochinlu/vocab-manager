@@ -52,7 +52,7 @@ export const getCachedBackground = () => {
 
     return null;
   } catch (error) {
-    console.error('讀取背景快取失敗:', error);
+    console.error('Failed to read background cache:', error);
     return null;
   }
 };
@@ -68,7 +68,7 @@ export const cacheBackground = (data, mode = 'daily') => {
       mode
     }));
   } catch (error) {
-    console.error('儲存背景快取失敗:', error);
+    console.error('Failed to save background cache:', error);
   }
 };
 

@@ -4,11 +4,11 @@ import { useToastContext } from '../../contexts/ToastContext';
 import { playPronunciation } from '../../services/speech.service';
 
 /**
- * 發音按鈕組件
- * @param {string} text - 要播放的文字
- * @param {string} accent - 口音 ('uk' | 'us')
- * @param {boolean} isSentence - 是否為句子
- * @param {string} label - 按鈕標籤
+ * Pronunciation Button Component
+ * @param {string} text - Text to play
+ * @param {string} accent - Accent ('uk' | 'us')
+ * @param {boolean} isSentence - Is it a sentence
+ * @param {string} label - Button label
  */
 export const PronunciationButton = ({ text, accent = 'us', isSentence = false, label }) => {
   const { showError } = useToastContext();
@@ -21,7 +21,7 @@ export const PronunciationButton = ({ text, accent = 'us', isSentence = false, l
     try {
       await playPronunciation(text, accent, isSentence);
     } catch (error) {
-      console.error('播放失敗:', error);
+      console.error('Playback failed:', error);
       showError(error.message);
     } finally {
       setIsPlaying(false);
@@ -29,7 +29,7 @@ export const PronunciationButton = ({ text, accent = 'us', isSentence = false, l
   };
 
   const colorClass = accent === 'uk' ? 'text-green-600 hover:text-green-800 hover:bg-green-50' : 'text-blue-600 hover:text-blue-800 hover:bg-blue-50';
-  const title = label || (accent === 'uk' ? '英式發音' : '美式發音');
+  const title = label || (accent === 'uk' ? 'British Pronunciation' : 'American Pronunciation');
 
   return (
     <button
@@ -45,7 +45,7 @@ export const PronunciationButton = ({ text, accent = 'us', isSentence = false, l
 };
 
 /**
- * 發音按鈕組（英式 + 美式）
+ * Pronunciation Button Group (British + American)
  */
 export const PronunciationGroup = ({ text, isSentence = false, className = '' }) => {
   return (

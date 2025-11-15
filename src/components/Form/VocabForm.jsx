@@ -7,8 +7,8 @@ import { PronunciationGroup } from '../common/PronunciationButton';
 import { translateToTraditionalChinese } from '../../services/openrouter.service';
 
 /**
- * 單字表單組件
- * 用於新增和編輯單字
+ * Vocabulary Form Component
+ * Used for adding and editing vocabulary words
  */
 export const VocabForm = ({
   formData,
@@ -35,12 +35,12 @@ export const VocabForm = ({
   onSave,
   onCancel
 }) => {
-  // 英文定義翻譯狀態
+  // English Definition Translation State
   const [definitionTranslation, setDefinitionTranslation] = useState(null);
   const [isTranslatingDefinition, setIsTranslatingDefinition] = useState(false);
   const [definitionTranslationError, setDefinitionTranslationError] = useState(null);
 
-  // 監聽 ESC 鍵取消表單
+  // Listen to ESC key to cancel form
   useEffect(() => {
     const handleEscapeKey = (event) => {
       if (event.key === 'Escape') {
@@ -48,10 +48,10 @@ export const VocabForm = ({
       }
     };
 
-    // 添加事件監聽器
+    // Add event listener
     document.addEventListener('keydown', handleEscapeKey);
 
-    // 清理事件監聽器
+    // Clean up event listener
     return () => {
       document.removeEventListener('keydown', handleEscapeKey);
     };
@@ -74,7 +74,7 @@ export const VocabForm = ({
     onFormDataChange({ ...formData, examplesOriginal: newExamples });
   };
 
-  // 處理英文定義翻譯
+  // Handle English definition translation
   const handleTranslateDefinition = async () => {
     if (definitionTranslation) {
       setDefinitionTranslation(null);
@@ -93,7 +93,7 @@ export const VocabForm = ({
       setDefinitionTranslation(result);
     } catch (err) {
       setDefinitionTranslationError(err.message);
-      console.error('翻譯錯誤:', err);
+      console.error('Translation error:', err);
     } finally {
       setIsTranslatingDefinition(false);
     }
@@ -102,14 +102,14 @@ export const VocabForm = ({
   return (
     <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl border border-white/20 p-6 mb-6">
       <h2 className="text-2xl font-bold text-gray-800 mb-4">
-        {editingVocab ? '✏️ 編輯單字' : '➕ 新增單字'}
+        {editingVocab ? '✏️ Edit Word' : '➕ Add Word'}
       </h2>
 
       <div className="space-y-4">
-        {/* 單字與詞性 */}
+        {/* Word and Part of Speech */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">單字或片語 *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Word or Phrase *</label>
             <div className="flex gap-2">
               <input
                 type="text"
@@ -119,24 +119,24 @@ export const VocabForm = ({
                   onClearSuggestions();
                 }}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                placeholder="例如: implement 或 look after"
+                placeholder="e.g. implement or look after"
               />
               <button
                 onClick={onCheckSpelling}
                 disabled={isCheckingSpelling || !formData.word.trim()}
                 type="button"
                 className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition disabled:bg-gray-400 flex items-center gap-2"
-                title="檢查拼字"
+                title="Check Spelling"
               >
                 {isCheckingSpelling ? <RefreshCw className="w-4 h-4 animate-spin" /> : <span>✓</span>}
               </button>
             </div>
-            <p className="text-xs text-gray-500 mt-1">💡 可以輸入單字或片語</p>
+            <p className="text-xs text-gray-500 mt-1">💡 You can enter a word or phrase</p>
 
-            {/* 拼字建議 */}
+            {/* Spelling suggestions */}
             {spellingSuggestions.length > 0 && (
               <div className="mt-2 bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                <p className="text-sm font-medium text-yellow-800 mb-2">💡 建議:</p>
+                <p className="text-sm font-medium text-yellow-800 mb-2">💡 Suggestions:</p>
                 <div className="flex flex-wrap gap-2">
                   {spellingSuggestions.map((suggestion, index) => (
                     <button
@@ -154,14 +154,14 @@ export const VocabForm = ({
                   type="button"
                   className="mt-2 text-xs text-yellow-700 hover:text-yellow-900 underline"
                 >
-                  忽略建議
+                  Ignore Suggestions
                 </button>
               </div>
             )}
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">詞性 *</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Part of Speech *</label>
             <select
               value={formData.partOfSpeech}
               onChange={(e) => updateField('partOfSpeech', e.target.value)}
@@ -174,7 +174,7 @@ export const VocabForm = ({
           </div>
         </div>
 
-        {/* AI 工具 */}
+        {/* AI Tools */}
         <AITools
           word={formData.word}
           onFetchFreeDictionary={onFetchFreeDictionary}
@@ -183,20 +183,20 @@ export const VocabForm = ({
           isFetchingCambridge={isFetchingCambridge}
         />
 
-        {/* 定義 */}
+        {/* Definitions */}
         <div className="grid md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">中文解釋</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Chinese Definition</label>
             <input
               type="text"
               value={formData.definitionChinese}
               onChange={(e) => updateField('definitionChinese', e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-              placeholder="例如: 實作、執行"
+              placeholder="e.g. implementation, execution"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">英文解釋</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">English Definition</label>
             <div className="space-y-2">
               <div className="flex gap-2 group">
                 <input
@@ -207,7 +207,7 @@ export const VocabForm = ({
                     setDefinitionTranslation(null);
                   }}
                   className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                  placeholder="例如: to put into operation"
+                  placeholder="e.g. to put into operation"
                 />
                 {formData.definitionEnglish && (
                   <div className="flex gap-1">
@@ -221,27 +221,27 @@ export const VocabForm = ({
                           ? 'bg-green-100 text-green-700 hover:bg-green-200'
                           : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
                       } disabled:opacity-50 disabled:cursor-not-allowed`}
-                      title={definitionTranslation ? '隱藏翻譯' : '翻譯成中文'}
+                      title={definitionTranslation ? 'Hide translation' : 'Translate to Chinese'}
                     >
                       {isTranslatingDefinition ? (
                         <Loader2 className="w-3 h-3 animate-spin" />
                       ) : (
                         <Languages className="w-3 h-3" />
                       )}
-                      <span>{definitionTranslation ? '隱藏' : '翻譯'}</span>
+                      <span>{definitionTranslation ? 'Hide' : 'Translate'}</span>
                     </button>
                   </div>
                 )}
               </div>
 
-              {/* 顯示翻譯結果 */}
+              {/* Show translation result */}
               {definitionTranslation && (
                 <div className="ml-2 pl-3 border-l-2 border-blue-300 bg-blue-50 rounded-r px-3 py-2">
                   <p className="text-sm text-blue-900">{definitionTranslation}</p>
                 </div>
               )}
 
-              {/* 顯示錯誤訊息 */}
+              {/* Show error message */}
               {definitionTranslationError && (
                 <div className="ml-2 pl-3 border-l-2 border-red-300 bg-red-50 rounded-r px-3 py-2">
                   <p className="text-xs text-red-700">{definitionTranslationError}</p>
@@ -251,32 +251,32 @@ export const VocabForm = ({
           </div>
         </div>
 
-        {/* 發音 */}
+        {/* Pronunciation */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">音標</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Phonetic</label>
           <input
             type="text"
             value={formData.phonetic}
             onChange={(e) => updateField('phonetic', e.target.value)}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-            placeholder="例如: /ˈɪm.plɪ.ment/"
+            placeholder="e.g. /ˈɪm.plɪ.ment/"
           />
         </div>
 
-        {/* 語音播放 */}
+        {/* Voice Playback */}
         {formData.word && (
           <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-            <p className="text-sm font-medium text-green-800 mb-3">🔊 試聽發音</p>
+            <p className="text-sm font-medium text-green-800 mb-3">🔊 Pronunciation Preview</p>
             <div className="flex gap-3">
               <PronunciationGroup text={formData.word} />
             </div>
           </div>
         )}
 
-        {/* 原始例句 */}
+        {/* Original Examples */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">原始例句</label>
-          <p className="text-xs text-gray-500 mb-2">💡 可以用 **粗體** 標記重點</p>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Original Examples</label>
+          <p className="text-xs text-gray-500 mb-2">💡 You can use **bold** to highlight key terms</p>
           {formData.examplesOriginal.map((example, index) => (
             <div key={index} className="flex gap-2 mb-2">
               <input
@@ -284,7 +284,7 @@ export const VocabForm = ({
                 value={example}
                 onChange={(e) => updateExample(index, e.target.value)}
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-                placeholder="例如: This method is **deprecated**"
+                placeholder="e.g. This method is **deprecated**"
               />
               {index === formData.examplesOriginal.length - 1 && (
                 <button
@@ -299,16 +299,16 @@ export const VocabForm = ({
           ))}
         </div>
 
-        {/* 我的例句 + AI 修正 */}
+        {/* My Example + AI Correction */}
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-2">我的例句</label>
+          <label className="block text-sm font-medium text-gray-700 mb-2">My Example</label>
           <div className="space-y-2">
             <textarea
               value={formData.myExample}
               onChange={(e) => updateField('myExample', e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
               rows="2"
-              placeholder="寫你自己的例句..."
+              placeholder="Write your own example..."
             />
             <button
               onClick={onCorrectExample}
@@ -319,23 +319,23 @@ export const VocabForm = ({
               {isCorrectingExample ? (
                 <>
                   <RefreshCw className="w-4 h-4 animate-spin" />
-                  AI 修正中...
+                  Correcting with AI...
                 </>
               ) : (
                 <>
                   <Edit2 className="w-4 h-4" />
-                  AI 修正
+                  AI Correction
                 </>
               )}
             </button>
 
-            {/* 警告訊息：修正後不包含目標單字 */}
+            {/* Warning message: Corrected sentence does not contain target word */}
             {warningMessage && (
               <div className="bg-amber-50 border-2 border-amber-300 rounded-lg p-4 relative">
                 <button
                   onClick={onClearWarning}
                   className="absolute top-2 right-2 text-amber-600 hover:text-amber-800 transition"
-                  title="關閉警告"
+                  title="Close warning"
                   type="button"
                 >
                   <X className="w-5 h-5" />
@@ -344,10 +344,10 @@ export const VocabForm = ({
                   <AlertTriangle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                   <div className="flex-1">
                     <p className="font-medium text-amber-900 mb-2">
-                      注意：修正後的句子沒有包含單字 <span className="font-bold">"{warningMessage.word}"</span>
+                      Note: The corrected sentence does not contain the word <span className="font-bold">"{warningMessage.word}"</span>
                     </p>
                     <div className="bg-white rounded-lg p-3 border border-amber-200">
-                      <p className="text-sm font-medium text-amber-800 mb-1">💡 如果要使用 "{warningMessage.word}"，可以這樣寫：</p>
+                      <p className="text-sm font-medium text-amber-800 mb-1">💡 If you want to use "{warningMessage.word}", you can write it like this:</p>
                       <p className="text-amber-900 text-sm italic">"{warningMessage.suggestion}"</p>
                     </div>
                   </div>
@@ -357,33 +357,33 @@ export const VocabForm = ({
 
             {formData.aiCorrected && (
               <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                <p className="text-sm font-medium text-green-800 mb-1">AI 修正結果:</p>
+                <p className="text-sm font-medium text-green-800 mb-1">AI Correction Result:</p>
                 <p className="text-green-900">{formData.aiCorrected}</p>
               </div>
             )}
           </div>
         </div>
 
-        {/* 情境 */}
+        {/* Scenario */}
         <div className="grid md:grid-cols-3 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">來源</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Source</label>
             <input
               type="text"
               value={formData.context.source}
               onChange={(e) => updateNestedField('context', 'source', e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-              placeholder="例如: React官方文件"
+              placeholder="e.g. React official docs"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">情境</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Scenario</label>
             <input
               type="text"
               value={formData.context.scenario}
               onChange={(e) => updateNestedField('context', 'scenario', e.target.value)}
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-              placeholder="例如: 讀API文件時遇到"
+              placeholder="e.g. encountered when reading API docs"
             />
           </div>
           <div>
@@ -398,7 +398,7 @@ export const VocabForm = ({
           </div>
         </div>
 
-        {/* 標籤 */}
+        {/* Tags */}
         <TagManager
           tags={formData.tags}
           newTag={newTag}
@@ -407,7 +407,7 @@ export const VocabForm = ({
           onRemoveTag={onRemoveTag}
         />
 
-        {/* 按鈕 */}
+        {/* Buttons */}
         <div className="flex gap-3 pt-4">
           <button
             onClick={onSave}
@@ -415,7 +415,7 @@ export const VocabForm = ({
             className="flex items-center gap-2 bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition"
           >
             <Check className="w-5 h-5" />
-            {editingVocab ? '更新' : '儲存'}
+            {editingVocab ? 'Update' : 'Save'}
           </button>
           <button
             onClick={onCancel}
@@ -423,7 +423,7 @@ export const VocabForm = ({
             className="flex items-center gap-2 bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition"
           >
             <X className="w-5 h-5" />
-            取消
+            Cancel
           </button>
         </div>
       </div>

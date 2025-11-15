@@ -20,7 +20,7 @@ export const useVocabs = () => {
       const loadedVocabs = await vocabService.loadVocabs();
       setVocabs(loadedVocabs);
     } catch (error) {
-      console.error('載入單字失敗:', error);
+      console.error('Failed to load words:', error);
       setVocabs([]);
     } finally {
       setLoading(false);
@@ -42,7 +42,7 @@ export const useVocabs = () => {
 
       return savedVocab;
     } catch (error) {
-      console.error('儲存單字失敗:', error);
+      console.error('Failed to save word:', error);
       throw error;
     }
   };
@@ -53,7 +53,7 @@ export const useVocabs = () => {
       await vocabService.deleteVocab(id);
       setVocabs(prev => prev.filter(v => v.id !== id));
     } catch (error) {
-      console.error('刪除單字失敗:', error);
+      console.error('Failed to delete word:', error);
       throw error;
     }
   };

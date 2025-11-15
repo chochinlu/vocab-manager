@@ -2,7 +2,7 @@ import React from 'react';
 import { Tag, X, Plus } from 'lucide-react';
 
 /**
- * 標籤管理組件
+ * Tag Manager Component
  */
 export const TagManager = ({ tags, newTag, onNewTagChange, onAddTag, onRemoveTag }) => {
   const handleKeyPress = (e) => {
@@ -14,7 +14,7 @@ export const TagManager = ({ tags, newTag, onNewTagChange, onAddTag, onRemoveTag
 
   return (
     <div>
-      <label className="block text-sm font-medium text-gray-700 mb-2">標籤</label>
+      <label className="block text-sm font-medium text-gray-700 mb-2">Tags</label>
       <div className="flex gap-2 mb-2">
         <input
           type="text"
@@ -22,7 +22,7 @@ export const TagManager = ({ tags, newTag, onNewTagChange, onAddTag, onRemoveTag
           onChange={(e) => onNewTagChange(e.target.value)}
           onKeyPress={handleKeyPress}
           className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
-          placeholder="輸入標籤後按 Enter"
+          placeholder="Enter tag and press Enter"
         />
         <button
           onClick={onAddTag}
@@ -30,7 +30,7 @@ export const TagManager = ({ tags, newTag, onNewTagChange, onAddTag, onRemoveTag
           className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition flex items-center gap-2"
         >
           <Plus className="w-4 h-4" />
-          新增
+          Add
         </button>
       </div>
       {tags.length > 0 && (

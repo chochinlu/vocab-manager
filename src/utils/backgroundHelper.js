@@ -13,7 +13,7 @@ if (typeof window !== 'undefined') {
   // 清除背景快取並重新載入
   window.refreshBackground = () => {
     clearBackgroundCache();
-    console.log('✅ 背景快取已清除！重新整理頁面以載入新背景。');
+    console.log('✅ Background cache cleared! Refresh the page to load new background.');
     window.location.reload();
   };
 
@@ -21,13 +21,13 @@ if (typeof window !== 'undefined') {
   window.setBackgroundMode = (mode) => {
     const validModes = ['always', 'daily', 'fixed'];
     if (!validModes.includes(mode)) {
-      console.error('❌ 無效的模式！請使用: always, daily, fixed');
+      console.error('❌ Invalid mode! Use: always, daily, fixed');
       return;
     }
     const settings = JSON.parse(localStorage.getItem('vocab_background_settings') || '{}');
     saveBackgroundSettings({ ...settings, mode, enabled: true });
     clearBackgroundCache();
-    console.log(`✅ 背景模式已設為: ${mode}`);
+    console.log(`✅ Background mode set to: ${mode}`);
     window.location.reload();
   };
 
@@ -35,13 +35,13 @@ if (typeof window !== 'undefined') {
   window.setBackgroundTheme = (theme) => {
     const validThemes = ['technology', 'nature', 'workspace', 'minimal', 'architecture'];
     if (!validThemes.includes(theme)) {
-      console.error('❌ 無效的主題！請使用: technology, nature, workspace, minimal, architecture');
+      console.error('❌ Invalid theme! Use: technology, nature, workspace, minimal, architecture');
       return;
     }
     const settings = JSON.parse(localStorage.getItem('vocab_background_settings') || '{}');
     saveBackgroundSettings({ ...settings, theme, enabled: true });
     clearBackgroundCache();
-    console.log(`✅ 背景主題已設為: ${theme}`);
+    console.log(`✅ Background theme set to: ${theme}`);
     window.location.reload();
   };
 
@@ -49,7 +49,7 @@ if (typeof window !== 'undefined') {
   window.disableBackground = () => {
     const settings = JSON.parse(localStorage.getItem('vocab_background_settings') || '{}');
     saveBackgroundSettings({ ...settings, enabled: false });
-    console.log('✅ 背景圖片已停用！重新整理頁面生效。');
+    console.log('✅ Background images disabled! Refresh the page for changes.');
     window.location.reload();
   };
 
@@ -58,7 +58,7 @@ if (typeof window !== 'undefined') {
     const settings = JSON.parse(localStorage.getItem('vocab_background_settings') || '{}');
     saveBackgroundSettings({ ...settings, enabled: true });
     clearBackgroundCache();
-    console.log('✅ 背景圖片已啟用！重新整理頁面生效。');
+    console.log('✅ Background images enabled! Refresh the page for changes.');
     window.location.reload();
   };
 

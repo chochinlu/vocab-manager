@@ -2,9 +2,9 @@ import React from 'react';
 import { Search } from 'lucide-react';
 
 /**
- * 搜尋列組件
+ * Search Bar Component
  */
-export const SearchBar = ({ value, onChange, placeholder = '搜尋單字、中英文定義...' }) => {
+export const SearchBar = ({ value, onChange, placeholder = 'Search words, definitions...' }) => {
   return (
     <div className="relative">
       <Search className="absolute left-3 top-3 w-5 h-5 text-gray-400" />

@@ -2,9 +2,9 @@ import React from 'react';
 import { RefreshCw } from 'lucide-react';
 
 /**
- * 載入中畫面組件
+ * Loading Spinner Component
  */
-export const LoadingSpinner = ({ message = '載入中...' }) => {
+export const LoadingSpinner = ({ message = 'Loading...' }) => {
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-white/95 backdrop-blur-sm rounded-lg shadow-xl border border-white/20 p-8">

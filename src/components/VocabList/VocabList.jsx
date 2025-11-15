@@ -8,7 +8,7 @@ export const VocabList = ({ vocabs, totalCount, onEdit, onDelete }) => {
   if (vocabs.length === 0) {
     return (
       <div className="bg-white rounded-lg shadow p-8 text-center text-gray-500">
-        {totalCount === 0 ? '還沒有單字,點擊上方「新增單字」開始建立你的詞彙庫!' : '找不到符合條件的單字'}
+        {totalCount === 0 ? 'No words yet. Click "Add Word" above to start building your vocabulary!' : 'No words matching the criteria'}
       </div>
     );
   }

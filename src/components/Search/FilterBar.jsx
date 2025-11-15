@@ -3,8 +3,8 @@ import { SearchBar } from './SearchBar';
 import { POS_OPTIONS, SORT_OPTIONS, DATE_FILTER_OPTIONS } from '../../utils/constants';
 
 /**
- * 篩選列組件
- * 包含搜尋、詞性、標籤、排序篩選器
+ * Filter Bar Component
+ * Contains search, POS, tags, and sort filters
  */
 export const FilterBar = ({
   searchTerm,
@@ -22,35 +22,35 @@ export const FilterBar = ({
 }) => {
   return (
     <div className="space-y-4">
-      {/* 搜尋與下拉選單 */}
+      {/* Search and select dropdowns */}
       <div className="grid md:grid-cols-4 gap-4">
         <SearchBar value={searchTerm} onChange={onSearchChange} />
 
-        {/* 詞性篩選 */}
+        {/* POS filter */}
         <select
           value={filterPos}
           onChange={(e) => onFilterPosChange(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
         >
-          <option value="all">所有詞性</option>
+          <option value="all">All Parts of Speech</option>
           {POS_OPTIONS.map(opt => (
             <option key={opt.value} value={opt.value}>{opt.label}</option>
           ))}
         </select>
 
-        {/* 標籤篩選 */}
+        {/* Tags filter */}
         <select
           value={filterTag}
           onChange={(e) => onFilterTagChange(e.target.value)}
           className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
         >
-          <option value="all">所有標籤</option>
+          <option value="all">All Tags</option>
           {allTags.map(tag => (
             <option key={tag} value={tag}>{tag}</option>
           ))}
         </select>
 
-        {/* 排序 */}
+        {/* Sort */}
         <select
           value={sortBy}
           onChange={(e) => onSortByChange(e.target.value)}
@@ -62,12 +62,12 @@ export const FilterBar = ({
         </select>
       </div>
 
-      {/* 日期快速篩選 */}
+      {/* Date quick filter */}
       <div className="flex items-center gap-4">
-        <span className="text-sm font-medium text-gray-700">顯示:</span>
+        <span className="text-sm font-medium text-gray-700">Display:</span>
         <div className="flex gap-2">
           {DATE_FILTER_OPTIONS.map(opt => {
-            // 根據不同的 value 顯示對應的統計數字
+            // Display corresponding stats based on different values
             const count = opt.value === 'today' ? stats.today :
                          opt.value === 'week' ? stats.week :
                          opt.value === 'month' ? stats.filtered :

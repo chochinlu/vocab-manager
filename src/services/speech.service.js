@@ -12,13 +12,13 @@
 export const playPronunciation = (text, accent = 'us', isSentence = false) => {
   return new Promise((resolve, reject) => {
     if (!text) {
-      reject(new Error('沒有文字可以播放'));
+      reject(new Error('No text to play'));
       return;
     }
 
     // 檢查瀏覽器支援
     if (!('speechSynthesis' in window)) {
-      reject(new Error('您的瀏覽器不支援語音合成功能'));
+      reject(new Error('Your browser does not support speech synthesis'));
       return;
     }
 
@@ -26,7 +26,7 @@ export const playPronunciation = (text, accent = 'us', isSentence = false) => {
     window.speechSynthesis.cancel();
 
     const utterance = new SpeechSynthesisUtterance(text);
-    // 句子用正常速度,單字稍微慢一點
+    // Normal speed for sentences, slightly slower for single words
     utterance.rate = isSentence ? 0.9 : 0.8;
     utterance.pitch = 1;
     utterance.volume = 1;
@@ -44,7 +44,7 @@ export const playPronunciation = (text, accent = 'us', isSentence = false) => {
     };
 
     utterance.onerror = () => {
-      reject(new Error('播放失敗,請確認瀏覽器支援該語言'));
+      reject(new Error('Playback failed, please ensure your browser supports this language'));
     };
 
     window.speechSynthesis.speak(utterance);
