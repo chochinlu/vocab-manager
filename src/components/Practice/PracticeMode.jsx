@@ -5,8 +5,10 @@ import { PracticeStats } from './PracticeStats';
 import { PracticeFeedback } from './PracticeFeedback';
 import { ErrorPatterns } from './ErrorPatterns';
 import { ModelSelector } from './ModelSelector';
+import { ScenarioPrompt } from './ScenarioPrompt';
 import { renderExample } from '../../utils/renderExample';
 import { getPOSLabel } from '../../utils/constants';
+import { getRandomScenario } from '../../utils/scenarioPrompts';
 import { LoadingSpinner } from '../common/LoadingSpinner';
 
 /**
@@ -15,6 +17,11 @@ import { LoadingSpinner } from '../common/LoadingSpinner';
  */
 export const PracticeMode = ({ vocab, onClose, onUpdateVocab }) => {
   const [showExamples, setShowExamples] = useState(false);
+  const [showScenario, setShowScenario] = useState(false);
+  const [currentScenario, setCurrentScenario] = useState(
+    () => getRandomScenario(vocab.partOfSpeech)
+  );
+
   const {
     sentence,
     setSentence,
@@ -26,6 +33,12 @@ export const PracticeMode = ({ vocab, onClose, onUpdateVocab }) => {
     continuePractice,
     addToExamples
   } = usePracticeSession(vocab, onUpdateVocab);
+
+  // Switch to a new random scenario
+  const handleRefreshScenario = () => {
+    const newScenario = getRandomScenario(vocab.partOfSpeech, currentScenario.id);
+    setCurrentScenario(newScenario);
+  };
 
   return (
     <div className="fixed inset-0 bg-white z-50 overflow-y-auto">
@@ -112,6 +125,25 @@ export const PracticeMode = ({ vocab, onClose, onUpdateVocab }) => {
             )}
           </div>
         </div>
+
+        {/* Scenario Prompt Toggle Button */}
+        {!showScenario && (
+          <button
+            onClick={() => setShowScenario(true)}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 border-2 border-dashed border-purple-300 rounded-lg text-purple-600 hover:bg-purple-50 transition-colors"
+          >
+            <Plus className="w-4 h-4" />
+            顯示練習情境提示
+          </button>
+        )}
+
+        {/* Scenario Prompt */}
+        <ScenarioPrompt
+          scenario={currentScenario}
+          onRefresh={handleRefreshScenario}
+          onClose={() => setShowScenario(false)}
+          isVisible={showScenario}
+        />
 
         {/* Practice Input */}
         <div className="bg-white rounded-lg border border-gray-200 p-4">

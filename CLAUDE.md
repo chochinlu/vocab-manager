@@ -8,17 +8,18 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - **前端**: React + Vite + Tailwind CSS v4
 - **後端**: Express API Server
 
-應用程式允許使用者儲存、管理和學習技術英文單字，具備 AI 輔助功能（拼字檢查、例句翻譯、定義翻譯、例句修正、字典查詢）和動態背景圖片功能。
+應用程式允許使用者儲存、管理和學習技術英文單字，具備 AI 輔助功能（拼字檢查、例句翻譯、定義翻譯、例句修正、字典查詢）、完整的練習系統（情境提示、AI 批改、統計追蹤）和動態背景圖片功能。
 
 ## 架構特色
 
-✅ **模組化組件設計** - 27 個精簡組件，清晰的職責分離
+✅ **模組化組件設計** - 33 個精簡組件，清晰的職責分離
 ✅ **前後端分離** - Express 代理 AI API 和 Unsplash API，解決 CORS 問題
 ✅ **API Key 安全** - 後端管理，不暴露在前端
 ✅ **自訂 Hooks** - 可重用的狀態邏輯
 ✅ **React Context** - Toast 通知系統使用 Context 管理全域狀態
 ✅ **服務層抽離** - API 邏輯獨立管理
 ✅ **動態背景圖片** - Unsplash API 提供高品質背景，支援多種主題與快取機制
+✅ **完整練習系統** - 情境提示、AI 批改、統計追蹤、錯誤分析
 
 ## 開發指令
 
@@ -79,6 +80,14 @@ npm run preview
   - `VocabCard.jsx` - 單字卡片
   - `ExampleSection.jsx` - 例句顯示區塊
 
+- **Practice/** - 練習系統
+  - `PracticeMode.jsx` - 全螢幕練習介面
+  - `PracticeStats.jsx` - 練習統計顯示
+  - `PracticeFeedback.jsx` - AI 批改結果顯示
+  - `ErrorPatterns.jsx` - 常見錯誤模式顯示
+  - `ModelSelector.jsx` - AI 模型選擇器
+  - `ScenarioPrompt.jsx` - 情境提示組件
+
 #### Context 層 (contexts/)
 - `ToastContext.jsx` - Toast 通知系統全域狀態管理
 
@@ -87,6 +96,7 @@ npm run preview
 - `useVocabFilters.js` - 篩選與排序邏輯
 - `useVocabForm.js` - 表單狀態管理
 - `useAIFeatures.js` - AI 功能整合
+- `usePracticeSession.js` - 練習會話管理（造句、批改、統計）
 - `useToast.js` - Toast 通知狀態管理
 
 #### 服務層 (services/)
@@ -95,19 +105,22 @@ npm run preview
 - `openrouter.service.js` - OpenRouter AI 服務（拼字檢查、例句翻譯，呼叫本地 Express API）
 - `dictionary.service.js` - 字典查詢（呼叫本地 Express API）
 - `speech.service.js` - 發音服務（Web Speech API）
+- `practice.service.js` - 練習批改服務（AI 批改、統計計算，呼叫本地 Express API）
 - `background.service.js` - 動態背景圖片服務（Unsplash API，呼叫本地 Express API）
 
 #### 工具層 (utils/)
-- `storage.js` - localStorage 封裝
+- `storage.js` - localStorage 封裝（包含 AI 模型設定管理）
 - `constants.js` - 常數定義（詞性、排序選項等）
 - `renderExample.jsx` - 例句渲染（支援 **粗體** 標記）
+- `scenarioPrompts.js` - 情境提示資料庫（43 種情境，按詞性分類）
 - `backgroundHelper.js` - 背景圖片管理輔助工具（開發用控制台指令）
 
 #### 主應用程式 (App.jsx)
-重構後的精簡版本（261 行，原 1423 行）：
+重構後的精簡版本（330 行，原 1423 行）：
 - 整合所有 Hooks 管理狀態
 - 協調各組件互動
 - 處理事件邏輯
+- 包含練習模式整合
 
 ### 後端架構 (server/)
 
@@ -156,6 +169,14 @@ npm run preview
    - 輸出: `{ id, url, description, author, ... }`
    - 支援主題 Collections 和關鍵字搜尋
 
+**練習系統 API 端點:**
+
+8. **POST /api/ai/practice-feedback**
+   - AI 批改學生造句
+   - 輸入: `{ word, partOfSpeech, sentence, model }`
+   - 輸出: `{ score, isCorrect, errors, suggestions, improvedVersion, overallComment, proficiencyAssessment }`
+   - 支援 3 種 AI 模型選擇（haiku, sonnet, qwen）
+
 ### 資料儲存 (src/utils/storage.js)
 - 使用 `localStorage` 模擬 `window.storage` API
 - 提供 `set()`, `get()`, `delete()`, `list()`, `clear()` 方法
@@ -191,7 +212,21 @@ npm run preview
     url: string
   },
   tags: string[],
-  reviewHistory: array
+  reviewHistory: array,
+  practiceStats: {
+    totalPractices: number,
+    lastPracticeDate: ISO string,
+    proficiencyLevel: 'beginner' | 'intermediate' | 'advanced' | 'mastered',
+    commonErrors: [
+      {
+        type: 'grammar' | 'usage' | 'word-choice' | 'spelling',
+        pattern: string,
+        count: number
+      }
+    ],
+    averageScore: number,
+    recentScores: number[]  // 最近 3 次分數
+  }
 }
 ```
 
@@ -295,16 +330,19 @@ npm run preview
 ✅ **Unsplash API 動態背景圖片** - 高品質背景圖片，支援多種主題與快取機制
 ✅ **Toast 通知系統** - 取代 alert，使用 React Context 提供優雅的通知體驗
 ✅ **浮動動作按鈕** - 右下角快速新增單字 + 回到頂部按鈕
+✅ **完整練習系統** - 造句練習、AI 批改、統計追蹤、錯誤分析
+✅ **情境提示功能** - 43 種多樣化情境提示，幫助從不同角度造句
 
 ## 未來改進方向
 
-1. 背景圖片設定介面（主題切換、模式選擇的 UI 介面）
-2. 加入單元測試 (Vitest + React Testing Library)
-3. 實作資料匯出/匯入功能
-4. 加入間隔重複學習 (Spaced Repetition) 演算法
-5. 多語言介面支援
-6. 引入狀態管理庫 (Zustand/Redux)（若應用規模持續擴大）
-7. 遷移到 Next.js（長期目標，獲得更好的 SSR 和 API Routes 支援）
+1. AI 動態生成個性化情境（根據 tags 和 context）
+2. 背景圖片設定介面（主題切換、模式選擇的 UI 介面）
+3. 加入單元測試 (Vitest + React Testing Library)
+4. 實作資料匯出/匯入功能
+5. 加入間隔重複學習 (Spaced Repetition) 演算法
+6. 多語言介面支援
+7. 引入狀態管理庫 (Zustand/Redux)（若應用規模持續擴大）
+8. 遷移到 Next.js（長期目標，獲得更好的 SSR 和 API Routes 支援）
 
 ## 參考文件
 

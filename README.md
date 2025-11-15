@@ -11,6 +11,7 @@
 - **智慧排序**: 依最新、最舊或字母順序排列
 - **例句管理**: 收錄原文例句、自訂例句，支援粗體標記 (`**text**`)
 - **動態背景**: 使用 Unsplash API 提供高品質隨機背景圖片，支援多種主題與更新模式
+- **練習系統**: 全螢幕練習模式，包含情境提示、AI 批改、統計追蹤與錯誤分析
 
 ### AI 輔助功能
 
@@ -29,6 +30,20 @@
 - 使用 Web Speech API 即時發音
 - 支援英式 (en-GB) 與美式 (en-US) 發音
 - 單字與例句皆可播放
+
+### 練習系統
+
+- **造句練習**: 針對每個單字進行造句練習
+- **情境提示**: 43 種情境提示，幫助從不同角度造句（職場、技術、口語等）
+- **AI 批改**: 即時批改並提供詳細回饋
+  - 評分（0-100）與星級顯示
+  - 錯誤分析（文法、用法、用字、拼字）
+  - 具體修正建議與改進版本
+- **統計追蹤**:
+  - 練習次數、平均分數、近期成績
+  - 熟練度等級（初學 → 進步中 → 熟練 → 精通）
+  - 常見錯誤模式分析
+- **AI 模型選擇**: 支援 Claude Haiku、Sonnet 4、Qwen 2.5 72B（免費）
 
 ## 技術棧
 
@@ -119,7 +134,8 @@ vocab-manager/
 │   │   ├── Layout/             # 版面組件 (Header)
 │   │   ├── Search/             # 搜尋與篩選 (SearchBar, FilterBar)
 │   │   ├── Form/               # 表單組件 (VocabForm, AITools, TagManager)
-│   │   └── VocabList/          # 單字列表 (VocabList, VocabCard, ExampleSection)
+│   │   ├── VocabList/          # 單字列表 (VocabList, VocabCard, ExampleSection)
+│   │   └── Practice/           # 練習系統 (PracticeMode, PracticeStats, PracticeFeedback, ErrorPatterns, ModelSelector, ScenarioPrompt)
 │   ├── contexts/               # React Context
 │   │   └── ToastContext.jsx    # Toast 通知系統 Context
 │   ├── hooks/                  # 自訂 Hooks
@@ -127,6 +143,7 @@ vocab-manager/
 │   │   ├── useVocabFilters.js  # 篩選與排序
 │   │   ├── useVocabForm.js     # 表單狀態管理
 │   │   ├── useAIFeatures.js    # AI 功能整合
+│   │   ├── usePracticeSession.js # 練習會話管理
 │   │   └── useToast.js         # Toast 通知狀態管理
 │   ├── services/               # API 服務層
 │   │   ├── vocab.service.js    # 單字 CRUD
@@ -134,13 +151,15 @@ vocab-manager/
 │   │   ├── openrouter.service.js # OpenRouter AI 服務（翻譯、拼字檢查）
 │   │   ├── dictionary.service.js # 字典查詢
 │   │   ├── speech.service.js   # 發音服務
+│   │   ├── practice.service.js # 練習批改服務
 │   │   └── background.service.js # 背景圖片服務（Unsplash API）
 │   ├── utils/                  # 工具函數
 │   │   ├── constants.js        # 常數定義
 │   │   ├── renderExample.jsx   # 例句渲染
 │   │   ├── storage.js          # localStorage 封裝
+│   │   ├── scenarioPrompts.js  # 情境提示資料庫
 │   │   └── backgroundHelper.js # 背景管理輔助工具（開發用）
-│   ├── App.jsx                 # 主應用程式 (261 行，已重構)
+│   ├── App.jsx                 # 主應用程式 (330 行，已重構)
 │   ├── main.jsx                # React 進入點
 │   └── index.css               # Tailwind CSS 主檔案
 ├── server/                     # 後端程式碼
@@ -188,7 +207,21 @@ vocab-manager/
     url: string
   },
   tags: string[],
-  reviewHistory: array
+  reviewHistory: array,
+  practiceStats: {
+    totalPractices: number,
+    lastPracticeDate: ISO string,
+    proficiencyLevel: 'beginner' | 'intermediate' | 'advanced' | 'mastered',
+    commonErrors: [
+      {
+        type: 'grammar' | 'usage' | 'word-choice' | 'spelling',
+        pattern: string,
+        count: number
+      }
+    ],
+    averageScore: number,
+    recentScores: number[]  // 最近 3 次分數
+  }
 }
 ```
 
@@ -253,6 +286,8 @@ vocab-manager/
 - [x] ~~Unsplash API 動態背景圖片~~
 - [x] ~~Toast 通知系統（取代 alert）~~
 - [x] ~~浮動動作按鈕（快速新增單字 + 回到頂部）~~
+- [x] ~~練習系統（造句練習、AI 批改、統計追蹤）~~
+- [x] ~~情境提示功能（43 種多樣化情境）~~
 - [ ] 背景圖片設定介面（主題切換、模式選擇）
 - [ ] 單元測試 (Vitest + React Testing Library)
 - [ ] 資料匯出/匯入功能
