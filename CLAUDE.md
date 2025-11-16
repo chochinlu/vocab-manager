@@ -20,6 +20,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ✅ **服務層抽離** - API 邏輯獨立管理
 ✅ **動態背景圖片** - Unsplash API 提供高品質背景，支援多種主題與快取機制
 ✅ **完整練習系統** - 情境提示、AI 批改、統計追蹤、錯誤分析
+✅ **例句管理功能** - 編輯模式下可刪除和調整例句順序，瀏覽模式保持簡潔
 
 ## 開發指令
 
@@ -77,8 +78,8 @@ npm run preview
 
 - **VocabList/** - 單字列表
   - `VocabList.jsx` - 列表容器
-  - `VocabCard.jsx` - 單字卡片
-  - `ExampleSection.jsx` - 例句顯示區塊
+  - `VocabCard.jsx` - 單字卡片（瀏覽模式，無例句編輯功能）
+  - `ExampleSection.jsx` - 例句顯示區塊（支援瀏覽/編輯模式切換）
 
 - **Practice/** - 練習系統
   - `PracticeMode.jsx` - 全螢幕練習介面
@@ -279,8 +280,16 @@ npm run preview
 - 日期篩選: 今天/本週/本月/全部
 - 排序: 最新/最舊/字母順序
 
-### 例句渲染
+### 例句管理與渲染
 - `renderExample()`: 將 `**text**` 轉換成粗體 HTML (用於標記片語動詞)
+- **例句編輯功能**:
+  - **瀏覽模式**（VocabCard）: 僅顯示例句內容，支援翻譯和發音，無編輯按鈕
+  - **編輯模式**（VocabForm）: 提供完整的例句管理功能
+    - 刪除例句（帶確認對話框）
+    - 調整例句順序（上移/下移按鈕）
+    - 新增例句
+    - 邊界處理：第一個例句無上移按鈕，最後一個例句無下移按鈕
+  - **ExampleSection 組件**: 根據是否傳遞 `onDelete` 和 `onReorder` handlers 自動判斷模式
 
 ## 技術棧
 
@@ -332,6 +341,7 @@ npm run preview
 ✅ **浮動動作按鈕** - 右下角快速新增單字 + 回到頂部按鈕
 ✅ **完整練習系統** - 造句練習、AI 批改、統計追蹤、錯誤分析
 ✅ **情境提示功能** - 43 種多樣化情境提示，幫助從不同角度造句
+✅ **例句管理功能** - 編輯模式下可刪除和調整例句順序
 
 ## 未來改進方向
 
