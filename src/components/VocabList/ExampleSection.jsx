@@ -1,16 +1,26 @@
 import React, { useState } from 'react';
-import { Languages, Loader2 } from 'lucide-react';
+import { Languages, Loader2, ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
 import { PronunciationGroup } from '../common/PronunciationButton';
 import { renderExample } from '../../utils/renderExample.jsx';
 import { translateToTraditionalChinese } from '../../services/openrouter.service';
 
 /**
- * 單個例句項目組件（帶翻譯功能）
+ * 單個例句項目組件（帶翻譯功能 + 刪除/排序功能）
  */
-const ExampleItem = ({ example, isSentence = true }) => {
+const ExampleItem = ({
+  example,
+  index,
+  totalCount,
+  isSentence = true,
+  onDelete,
+  onReorder
+}) => {
   const [translation, setTranslation] = useState(null);
   const [isTranslating, setIsTranslating] = useState(false);
   const [error, setError] = useState(null);
+
+  // 判斷是否為編輯模式（有傳遞操作函數）
+  const isEditMode = onDelete && onReorder;
 
   const handleTranslate = async () => {
     if (translation) {
@@ -41,23 +51,64 @@ const ExampleItem = ({ example, isSentence = true }) => {
           <PronunciationGroup text={example.replace(/\*\*/g, '')} isSentence={isSentence} />
         </div>
         <span className="text-gray-600 text-sm flex-1">{renderExample(example)}</span>
-        <button
-          onClick={handleTranslate}
-          disabled={isTranslating}
-          className={`flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors opacity-0 group-hover:opacity-100 ${
-            translation
-              ? 'bg-green-100 text-green-700 hover:bg-green-200'
-              : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-          } disabled:opacity-50 disabled:cursor-not-allowed`}
-          title={translation ? 'Hide translation' : 'Translate to Chinese'}
-        >
-          {isTranslating ? (
-            <Loader2 className="w-3 h-3 animate-spin" />
-          ) : (
-            <Languages className="w-3 h-3" />
+
+        {/* 操作按鈕區 (hover 顯示) */}
+        <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+          {/* 編輯模式才顯示刪除/排序按鈕 */}
+          {isEditMode && (
+            <>
+              {/* 上移按鈕 */}
+              {index > 0 && (
+                <button
+                  onClick={() => onReorder(index, 'up')}
+                  className="p-1 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                  title="Move up"
+                >
+                  <ChevronUp size={16} />
+                </button>
+              )}
+
+              {/* 下移按鈕 */}
+              {index < totalCount - 1 && (
+                <button
+                  onClick={() => onReorder(index, 'down')}
+                  className="p-1 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                  title="Move down"
+                >
+                  <ChevronDown size={16} />
+                </button>
+              )}
+
+              {/* 刪除按鈕 */}
+              <button
+                onClick={() => onDelete(index)}
+                className="p-1 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                title="Delete example"
+              >
+                <Trash2 size={16} />
+              </button>
+            </>
           )}
-          <span>{translation ? 'Hide' : 'Translate'}</span>
-        </button>
+
+          {/* 翻譯按鈕（始終顯示） */}
+          <button
+            onClick={handleTranslate}
+            disabled={isTranslating}
+            className={`flex items-center gap-1 px-2 py-1 text-xs rounded transition-colors ${
+              translation
+                ? 'bg-green-100 text-green-700 hover:bg-green-200'
+                : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+            } disabled:opacity-50 disabled:cursor-not-allowed`}
+            title={translation ? 'Hide translation' : 'Translate to Chinese'}
+          >
+            {isTranslating ? (
+              <Loader2 className="w-3 h-3 animate-spin" />
+            ) : (
+              <Languages className="w-3 h-3" />
+            )}
+            <span>{translation ? 'Hide' : 'Translate'}</span>
+          </button>
+        </div>
       </div>
 
       {/* 顯示翻譯結果 */}
@@ -80,7 +131,7 @@ const ExampleItem = ({ example, isSentence = true }) => {
 /**
  * 例句顯示區塊組件
  */
-export const ExampleSection = ({ examples }) => {
+export const ExampleSection = ({ examples, onDeleteExample, onReorderExample }) => {
   if (!examples) return null;
 
   return (
@@ -92,7 +143,14 @@ export const ExampleSection = ({ examples }) => {
           <ul className="space-y-3">
             {examples.original.map((ex, i) => (
               <li key={i}>
-                <ExampleItem example={ex} isSentence={true} />
+                <ExampleItem
+                  example={ex}
+                  index={i}
+                  totalCount={examples.original.length}
+                  isSentence={true}
+                  onDelete={onDeleteExample}
+                  onReorder={onReorderExample}
+                />
               </li>
             ))}
           </ul>

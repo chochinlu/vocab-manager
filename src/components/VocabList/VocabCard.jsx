@@ -149,7 +149,7 @@ export const VocabCard = ({ vocab, onEdit, onDelete, onPractice }) => {
           <DefinitionItem definition={vocab.definitions.english} />
         )}
 
-        {/* 例句 */}
+        {/* 例句（瀏覽模式：不傳遞刪除/排序 handlers） */}
         <ExampleSection examples={vocab.examples} />
 
         {/* 上下文 */}

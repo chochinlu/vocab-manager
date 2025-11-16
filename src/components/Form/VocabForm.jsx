@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Check, X, RefreshCw, Plus, Edit2, Volume2, AlertTriangle, Languages, Loader2 } from 'lucide-react';
+import { Check, X, RefreshCw, Plus, Edit2, Volume2, AlertTriangle, Languages, Loader2, ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
 import { POS_OPTIONS } from '../../utils/constants';
 import { AITools } from './AITools';
 import { TagManager } from './TagManager';
@@ -72,6 +72,26 @@ export const VocabForm = ({
     const newExamples = [...formData.examplesOriginal];
     newExamples[index] = value;
     onFormDataChange({ ...formData, examplesOriginal: newExamples });
+  };
+
+  // 刪除例句
+  const handleDeleteExample = (index) => {
+    if (!confirm('Are you sure you want to delete this example?')) {
+      return;
+    }
+    const newExamples = formData.examplesOriginal.filter((_, i) => i !== index);
+    onFormDataChange({ ...formData, examplesOriginal: newExamples });
+  };
+
+  // 調整例句順序
+  const handleReorderExample = (index, direction) => {
+    const examples = [...formData.examplesOriginal];
+    const targetIndex = direction === 'up' ? index - 1 : index + 1;
+
+    // 交換位置
+    [examples[index], examples[targetIndex]] = [examples[targetIndex], examples[index]];
+
+    onFormDataChange({ ...formData, examplesOriginal: examples });
   };
 
   // Handle English definition translation
@@ -279,6 +299,31 @@ export const VocabForm = ({
           <p className="text-xs text-gray-500 mb-2">💡 You can use **bold** to highlight key terms</p>
           {formData.examplesOriginal.map((example, index) => (
             <div key={index} className="flex gap-2 mb-2">
+              {/* 上移按鈕 */}
+              {index > 0 && (
+                <button
+                  onClick={() => handleReorderExample(index, 'up')}
+                  type="button"
+                  className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                  title="Move up"
+                >
+                  <ChevronUp className="w-5 h-5" />
+                </button>
+              )}
+
+              {/* 下移按鈕 */}
+              {index < formData.examplesOriginal.length - 1 && (
+                <button
+                  onClick={() => handleReorderExample(index, 'down')}
+                  type="button"
+                  className="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded transition-colors"
+                  title="Move down"
+                >
+                  <ChevronDown className="w-5 h-5" />
+                </button>
+              )}
+
+              {/* 輸入欄位 */}
               <input
                 type="text"
                 value={example}
@@ -286,11 +331,24 @@ export const VocabForm = ({
                 className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500"
                 placeholder="e.g. This method is **deprecated**"
               />
+
+              {/* 刪除按鈕 */}
+              <button
+                onClick={() => handleDeleteExample(index)}
+                type="button"
+                className="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded transition-colors"
+                title="Delete example"
+              >
+                <Trash2 className="w-5 h-5" />
+              </button>
+
+              {/* 新增按鈕（只在最後一個顯示） */}
               {index === formData.examplesOriginal.length - 1 && (
                 <button
                   onClick={onAddExampleField}
                   type="button"
-                  className="px-3 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+                  className="px-3 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors"
+                  title="Add new example"
                 >
                   <Plus className="w-5 h-5" />
                 </button>
