@@ -47,6 +47,8 @@ const VocabManager = () => {
     setSortBy,
     filterDate,
     setFilterDate,
+    filterPractice,
+    setFilterPractice,
     allTags,
     filteredVocabs,
     stats
@@ -262,6 +264,8 @@ const VocabManager = () => {
             onSortByChange={setSortBy}
             filterDate={filterDate}
             onFilterDateChange={setFilterDate}
+            filterPractice={filterPractice}
+            onFilterPracticeChange={setFilterPractice}
             allTags={allTags}
             stats={stats}
           />

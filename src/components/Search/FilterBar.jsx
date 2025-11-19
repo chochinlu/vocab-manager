@@ -1,6 +1,6 @@
 import React from 'react';
 import { SearchBar } from './SearchBar';
-import { POS_OPTIONS, SORT_OPTIONS, DATE_FILTER_OPTIONS } from '../../utils/constants';
+import { POS_OPTIONS, SORT_OPTIONS, DATE_FILTER_OPTIONS, PRACTICE_FILTER_OPTIONS } from '../../utils/constants';
 
 /**
  * Filter Bar Component
@@ -17,6 +17,8 @@ export const FilterBar = ({
   onSortByChange,
   filterDate,
   onFilterDateChange,
+  filterPractice,
+  onFilterPracticeChange,
   allTags,
   stats
 }) => {
@@ -82,6 +84,51 @@ export const FilterBar = ({
                     ? 'bg-indigo-600 text-white'
                     : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                 }`}
+              >
+                {opt.label} ({count})
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Practice status filter */}
+      <div className="flex items-center gap-4">
+        <span className="text-sm font-medium text-gray-700">Practice:</span>
+        <div className="flex gap-2">
+          {PRACTICE_FILTER_OPTIONS.map(opt => {
+            // Display corresponding stats based on different values
+            const count = opt.value === 'all' ? stats.total :
+                         opt.value === 'practiced' ? stats.practiced :
+                         stats.unpracticed;
+
+            // Different colors for different options
+            const getButtonStyle = () => {
+              const isActive = filterPractice === opt.value;
+
+              if (opt.value === 'all') {
+                return isActive
+                  ? 'bg-indigo-600 text-white'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200';
+              }
+
+              if (opt.value === 'practiced') {
+                return isActive
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-emerald-50 text-emerald-700 hover:bg-emerald-100';
+              }
+
+              // unpracticed
+              return isActive
+                ? 'bg-amber-600 text-white'
+                : 'bg-amber-50 text-amber-700 hover:bg-amber-100';
+            };
+
+            return (
+              <button
+                key={opt.value}
+                onClick={() => onFilterPracticeChange(opt.value)}
+                className={`px-4 py-2 rounded-lg text-sm font-medium transition ${getButtonStyle()}`}
               >
                 {opt.label} ({count})
               </button>

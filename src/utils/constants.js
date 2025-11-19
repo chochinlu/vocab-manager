@@ -28,6 +28,13 @@ export const DATE_FILTER_OPTIONS = [
   { value: 'all', label: 'All' }
 ];
 
+// Practice Status Filter Options
+export const PRACTICE_FILTER_OPTIONS = [
+  { value: 'all', label: 'All' },
+  { value: 'practiced', label: 'Practiced' },
+  { value: 'unpracticed', label: 'Unpracticed' }
+];
+
 /**
  * Get Part of Speech label from value
  * @param {string} value - POS value

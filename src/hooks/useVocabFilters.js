@@ -9,6 +9,7 @@ export const useVocabFilters = (vocabs) => {
   const [filterPos, setFilterPos] = useState('all');
   const [filterTag, setFilterTag] = useState('all');
   const [filterDate, setFilterDate] = useState('week');
+  const [filterPractice, setFilterPractice] = useState('all');
   const [sortBy, setSortBy] = useState('newest');
 
   // 取得所有標籤
@@ -46,9 +47,17 @@ export const useVocabFilters = (vocabs) => {
       if (filterDate === 'week' && vocabDate < weekAgo) return false;
       if (filterDate === 'month' && vocabDate < monthAgo) return false;
 
+      // 練習狀態過濾
+      if (filterPractice === 'practiced' && (!v.practiceStats || v.practiceStats.totalPractices === 0)) {
+        return false;
+      }
+      if (filterPractice === 'unpracticed' && v.practiceStats?.totalPractices > 0) {
+        return false;
+      }
+
       return true;
     });
-  }, [vocabs, searchTerm, filterPos, filterTag, filterDate]);
+  }, [vocabs, searchTerm, filterPos, filterTag, filterDate, filterPractice]);
 
   // 排序單字
   const sortedVocabs = useMemo(() => {
@@ -70,11 +79,17 @@ export const useVocabFilters = (vocabs) => {
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
     const weekAgo = new Date(today.getTime() - 7 * 24 * 60 * 60 * 1000);
 
+    // 練習統計
+    const practiced = vocabs.filter(v => v.practiceStats?.totalPractices > 0).length;
+    const unpracticed = vocabs.length - practiced;
+
     return {
       total: vocabs.length,
       today: vocabs.filter(v => new Date(v.addedDate) >= today).length,
       week: vocabs.filter(v => new Date(v.addedDate) >= weekAgo).length,
-      filtered: sortedVocabs.length
+      filtered: sortedVocabs.length,
+      practiced,
+      unpracticed
     };
   }, [vocabs, sortedVocabs]);
 
@@ -87,6 +102,8 @@ export const useVocabFilters = (vocabs) => {
     setFilterTag,
     filterDate,
     setFilterDate,
+    filterPractice,
+    setFilterPractice,
     sortBy,
     setSortBy,
     allTags,

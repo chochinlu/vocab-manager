@@ -57,7 +57,7 @@ export const Header = ({ stats, onToggleForm }) => {
       </div>
 
       {/* Statistics info */}
-      <div className="grid grid-cols-4 gap-4 mb-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-4 mb-4">
         <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg p-3">
           <p className="text-sm text-blue-600 font-medium">Total Words</p>
           <p className="text-2xl font-bold text-blue-700">{stats.total}</p>
@@ -73,6 +73,14 @@ export const Header = ({ stats, onToggleForm }) => {
         <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg p-3">
           <p className="text-sm text-orange-600 font-medium">Currently Showing</p>
           <p className="text-2xl font-bold text-orange-700">{stats.filtered}</p>
+        </div>
+        <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 rounded-lg p-3">
+          <p className="text-sm text-emerald-600 font-medium">Practiced</p>
+          <p className="text-2xl font-bold text-emerald-700">{stats.practiced}</p>
+        </div>
+        <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-lg p-3">
+          <p className="text-sm text-amber-600 font-medium">Unpracticed</p>
+          <p className="text-2xl font-bold text-amber-700">{stats.unpracticed}</p>
         </div>
       </div>
     </div>
