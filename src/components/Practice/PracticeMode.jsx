@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ArrowLeft, Send, Eraser, BookOpen, ChevronDown, ChevronUp, Plus } from 'lucide-react';
 import { usePracticeSession } from '../../hooks/usePracticeSession';
 import { PracticeStats } from './PracticeStats';
@@ -21,6 +21,17 @@ export const PracticeMode = ({ vocab, onClose, onUpdateVocab }) => {
   const [currentScenario, setCurrentScenario] = useState(
     () => getRandomScenario(vocab.partOfSpeech)
   );
+
+  // 監聽 ESC 鍵退出練習模式
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === 'Escape') {
+        onClose();
+      }
+    };
+    document.addEventListener('keydown', handleEscape);
+    return () => document.removeEventListener('keydown', handleEscape);
+  }, [onClose]);
 
   const {
     sentence,
