@@ -26,7 +26,8 @@ export const useVocabFilters = (vocabs) => {
     return vocabs.filter(v => {
       // 搜尋過濾
       if (searchTerm) {
-        const term = searchTerm.toLowerCase();
+        // 自動去除前後空白並轉成小寫，讓搜尋更寬容
+        const term = searchTerm.trim().toLowerCase();
         const matchWord = v.word.toLowerCase().includes(term);
         const matchChinese = v.definitions.chinese.toLowerCase().includes(term);
         const matchEnglish = v.definitions.english.toLowerCase().includes(term);
