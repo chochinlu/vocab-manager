@@ -142,7 +142,7 @@ export const ExampleSection = ({ examples, onDeleteExample, onReorderExample }) 
           <p className="font-medium text-gray-700 mb-2">Original Examples:</p>
           <ul className="space-y-3">
             {examples.original.map((ex, i) => (
-              <li key={i}>
+              <li key={ex}>
                 <ExampleItem
                   example={ex}
                   index={i}
