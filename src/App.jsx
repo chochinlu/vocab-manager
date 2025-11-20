@@ -97,7 +97,15 @@ const VocabManager = () => {
 
   // 處理從浮動按鈕新增單字（總是打開表單）
   const handleAddVocabFromFloating = () => {
-    if (!showAddForm) {
+    if (showAddForm) {
+      // 如果表單已開啟，先關閉再打開（強制重新渲染和滾動）
+      setShowAddForm(false);
+      setTimeout(() => {
+        resetForm();
+        setShowAddForm(true);
+      }, 0);
+    } else {
+      // 如果表單關閉，直接打開
       setShowAddForm(true);
     }
   };
@@ -131,7 +139,7 @@ const VocabManager = () => {
   const handleEditVocab = (vocab) => {
     loadVocabToForm(vocab);
     setShowAddForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+    // Scrolling is now handled by VocabForm component
   };
 
   // 處理練習單字

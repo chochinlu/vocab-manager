@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Check, X, RefreshCw, Plus, Edit2, Volume2, AlertTriangle, Languages, Loader2, ChevronUp, ChevronDown, Trash2 } from 'lucide-react';
 import { POS_OPTIONS } from '../../utils/constants';
 import { AITools } from './AITools';
@@ -39,6 +39,37 @@ export const VocabForm = ({
   const [definitionTranslation, setDefinitionTranslation] = useState(null);
   const [isTranslatingDefinition, setIsTranslatingDefinition] = useState(false);
   const [definitionTranslationError, setDefinitionTranslationError] = useState(null);
+
+  // Word input ref for auto-scroll and focus
+  const wordInputRef = useRef(null);
+
+  // Auto-scroll to word input and focus when form is mounted
+  useEffect(() => {
+    // Delay to ensure DOM is fully rendered and layout is stable
+    const timer = setTimeout(() => {
+      if (wordInputRef.current) {
+        // Get input position
+        const rect = wordInputRef.current.getBoundingClientRect();
+
+        // Set offset from top (responsive: smaller on mobile)
+        const offset = window.innerWidth < 768 ? 20 : 80;
+
+        // Calculate target scroll position
+        const targetScrollY = window.scrollY + rect.top - offset;
+
+        // Smooth scroll to position (ensure not below 0)
+        window.scrollTo({
+          top: Math.max(0, targetScrollY),
+          behavior: 'smooth'
+        });
+
+        // Auto-focus the input field
+        wordInputRef.current.focus();
+      }
+    }, 150);
+
+    return () => clearTimeout(timer);
+  }, []); // Run once when component mounts
 
   // Listen to ESC key to cancel form
   useEffect(() => {
@@ -132,6 +163,7 @@ export const VocabForm = ({
             <label className="block text-sm font-medium text-gray-700 mb-2">Word or Phrase *</label>
             <div className="flex gap-2">
               <input
+                ref={wordInputRef}
                 type="text"
                 value={formData.word}
                 onChange={(e) => {

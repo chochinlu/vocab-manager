@@ -34,14 +34,8 @@ export const FloatingActionButtons = ({ onAddVocab }) => {
 
   // Add word
   const handleAddVocab = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: 'smooth'
-    });
-    // Delay opening form to wait for scroll to complete
-    setTimeout(() => {
-      onAddVocab();
-    }, 300);
+    // Simply trigger the callback - scrolling is now handled by VocabForm
+    onAddVocab();
   };
 
   // Scroll to top
