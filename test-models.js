@@ -1,6 +1,6 @@
 /**
  * 測試不同 AI 模型的批改表現
- * 使用同一個例句測試三個模型：Sonnet 4, Haiku, Qwen 2.5 72B
+ * 使用同一個例句測試三個模型：Sonnet 4, Haiku, Grok 4.1 Fast
  */
 
 import dotenv from 'dotenv';
@@ -166,10 +166,10 @@ async function testHaiku(word, partOfSpeech, sentence) {
 }
 
 /**
- * 測試 Qwen 2.5 72B (OpenRouter)
+ * 測試 Grok 4.1 Fast (OpenRouter)
  */
 async function testQwen(word, partOfSpeech, sentence) {
-  console.log('\n🟡 測試 Qwen 2.5 72B (OpenRouter)...');
+  console.log('\n🟡 測試 Grok 4.1 Fast (OpenRouter)...');
   const startTime = Date.now();
 
   try {
@@ -182,7 +182,7 @@ async function testQwen(word, partOfSpeech, sentence) {
         'X-Title': 'Vocab Manager Test'
       },
       body: JSON.stringify({
-        model: 'qwen/qwen-2.5-72b-instruct:free',
+        model: 'x-ai/grok-4.1-fast:free',
         messages: [{
           role: 'user',
           content: PROMPT_TEMPLATE(word, partOfSpeech, sentence)
@@ -198,7 +198,7 @@ async function testQwen(word, partOfSpeech, sentence) {
       const cleanJson = content.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
       const result = JSON.parse(cleanJson);
       return {
-        model: 'Qwen 2.5 72B',
+        model: 'Grok 4.1 Fast',
         duration,
         result,
         usage: data.usage
@@ -206,7 +206,7 @@ async function testQwen(word, partOfSpeech, sentence) {
     }
   } catch (error) {
     return {
-      model: 'Qwen 2.5 72B',
+      model: 'Grok 4.1 Fast',
       duration: Date.now() - startTime,
       error: error.message
     };

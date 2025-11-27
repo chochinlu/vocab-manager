@@ -46,7 +46,7 @@
   - 練習次數、平均分數、近期成績
   - 熟練度等級（初學 → 進步中 → 熟練 → 精通）
   - 常見錯誤模式分析
-- **AI 模型選擇**: 支援 Claude Haiku、Sonnet 4、Qwen 2.5 72B（免費）
+- **AI 模型選擇**: 支援 Claude Haiku、Sonnet 4、Grok 4.1 Fast（免費）
 
 ## 技術棧
 
@@ -256,7 +256,7 @@ vocab-manager/
 ### AI 功能架構
 
 - **Anthropic Claude**: 例句修正、字典查詢（利用 tools 功能）
-- **OpenRouter 免費模型**: 拼字檢查、例句翻譯（使用 `qwen/qwen-2.5-72b-instruct:free`）
+- **OpenRouter 免費模型**: 拼字檢查、例句翻譯（使用 `x-ai/grok-4.1-fast:free`）
 - **Unsplash API**: 隨機背景圖片（免費，每小時 50 次請求）
   - 支援 5 種主題：科技、自然、辦公空間、極簡、建築
   - 3 種更新模式：每次更換、每日更換（預設）、固定背景

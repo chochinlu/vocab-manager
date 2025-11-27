@@ -261,7 +261,7 @@ app.post('/api/openrouter/translate', async (req, res) => {
         'X-Title': 'Vocab Manager'
       },
       body: JSON.stringify({
-        model: 'qwen/qwen-2.5-72b-instruct:free',
+        model: 'x-ai/grok-4.1-fast:free',
         messages: [{
           role: 'user',
           content: `請將以下英文翻譯成繁體中文（台灣用語）：
@@ -314,7 +314,7 @@ app.post('/api/openrouter/spell-check', async (req, res) => {
         'X-Title': 'Vocab Manager'
       },
       body: JSON.stringify({
-        model: 'qwen/qwen-2.5-72b-instruct:free',
+        model: 'x-ai/grok-4.1-fast:free',
         messages: [{
           role: 'user',
           content: `分析這個英文單字: "${word}"
@@ -384,7 +384,7 @@ app.post('/api/ai/practice-feedback', async (req, res) => {
   const modelMap = {
     'sonnet': 'claude-sonnet-4-20250514',
     'haiku': 'claude-3-5-haiku-20241022',
-    'qwen': 'qwen/qwen-2.5-72b-instruct:free'
+    'qwen': 'x-ai/grok-4.1-fast:free'
   };
 
   const selectedModel = modelMap[model] || modelMap['haiku'];

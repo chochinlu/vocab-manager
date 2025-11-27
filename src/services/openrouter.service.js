@@ -1,6 +1,6 @@
 /**
  * OpenRouter AI 服務 - 透過本地 Express API 呼叫 OpenRouter
- * 使用免費模型: qwen/qwen-2.5-72b-instruct:free
+ * 使用免費模型: x-ai/grok-4.1-fast:free
  */
 
 const API_BASE_URL = 'http://localhost:3001/api';
